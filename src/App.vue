@@ -19,10 +19,6 @@ onMounted(() => {
 
       ctx.drawImage(img, 0, 0)
 
-      // this needs a better calculation
-      ctx.rotate(0.5)
-      ctx.translate(0, -600)
-
       ctx.fillStyle = 'white'
       ctx.lineWidth = 6
       ctx.globalAlpha = 0.1
@@ -30,8 +26,13 @@ onMounted(() => {
       ctx.textBaseline = 'hanging'
       ctx.font = '32px sans-serif'
 
-      const xCount = Math.floor(img.width / xStep)
-      const yCount = Math.floor(img.width / yStep)
+      // make watermark twice as wide and twice as tall
+      const xCount = Math.floor((img.width * 2) / xStep)
+      const yCount = Math.floor((img.height * 2) / yStep)
+
+      // then rotate and translate up by height to center it on an angle
+      ctx.rotate(0.5)
+      ctx.translate(0, -img.height)
 
       for (let y = 0; y < yCount; y++) {
         for (let x = 0; x < xCount; x++) {
