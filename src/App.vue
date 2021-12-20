@@ -1,53 +1,65 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 
-const xStep = 250
-const yStep = 250
-const message = ref('Hello World')
+const xStep = ref(550)
+const yStep = ref(250)
+const message = ref('example.com')
 
-onMounted(() => {
-  const img = new Image()
+const img = new Image()
 
-  img.addEventListener('load', () => {
-    if (canvas.value) {
-      canvas.value.width = img.width
-      canvas.value.height = img.height
+const redraw = () => {
+  if (canvas.value) {
+    canvas.value.width = img.width
+    canvas.value.height = img.height
 
-      const ctx = canvas.value.getContext('2d')!
+    const ctx = canvas.value.getContext('2d')!
 
-      ctx.drawImage(img, 0, 0)
+    ctx.drawImage(img, 0, 0)
 
-      ctx.fillStyle = 'white'
-      ctx.lineWidth = 6
-      ctx.globalAlpha = 0.1
+    ctx.fillStyle = 'white'
+    ctx.lineWidth = 6
+    ctx.globalAlpha = 0.2
 
-      ctx.textBaseline = 'hanging'
-      ctx.font = '32px sans-serif'
+    ctx.textBaseline = 'hanging'
+    ctx.font = '32px sans-serif'
 
-      // make watermark twice as wide and twice as tall
-      const xCount = Math.floor((img.width * 2) / xStep)
-      const yCount = Math.floor((img.height * 2) / yStep)
+    // make watermark twice as wide and twice as tall
+    const xCount = Math.ceil((img.width * 2) / xStep.value)
+    const yCount = Math.ceil((img.height * 2) / yStep.value)
 
-      // then rotate and translate up by height to center it on an angle
-      ctx.rotate(0.5)
-      ctx.translate(0, -img.height)
+    // then rotate and translate up by height to center it on an angle
+    ctx.rotate(0.5)
+    ctx.translate(0, -img.height)
 
-      for (let y = 0; y < yCount; y++) {
-        for (let x = 0; x < xCount; x++) {
-          console.log('ding')
-          ctx.strokeText(message.value, x * xStep, y * yStep)
-          ctx.fillText(message.value, x * xStep, y * yStep)
-        }
+    for (let y = 0; y < yCount; y++) {
+      for (let x = 0; x < xCount; x++) {
+        // zig zag horizontally
+        const xOffset = y % 2 ? xStep.value / 2 : 0
+        ctx.strokeText(message.value, x * xStep.value + xOffset, y * yStep.value)
+        ctx.fillText(message.value, x * xStep.value + xOffset, y * yStep.value)
       }
     }
-  }, false)
+  }
+}
+
+onMounted(() => {
+  img.addEventListener('load', redraw, false)
 
   img.src = '/test.jpg'
 })
+
+watch(
+  [xStep, yStep, message],
+  redraw
+)
 </script>
 
 <template>
-  <canvas ref="canvas"></canvas>
+  <input type="number" v-model="xStep" />
+  <input type="number" v-model="yStep" />
+  <input type="text" v-model="message" />
+
+  <canvas ref="canvas" class="w-1/2"></canvas>
 </template>
