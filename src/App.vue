@@ -5,6 +5,7 @@ const canvas = ref<HTMLCanvasElement | null>(null)
 
 const xStep = ref(550)
 const yStep = ref(250)
+const opacity = ref(0.3)
 const message = ref('example.com')
 
 const img = new Image()
@@ -21,7 +22,7 @@ function redraw() {
 
     ctx.fillStyle = 'white'
     ctx.lineWidth = 6
-    ctx.globalAlpha = 0.2
+    ctx.globalAlpha = opacity.value
 
     ctx.textBaseline = 'hanging'
     ctx.font = '32px sans-serif'
@@ -50,7 +51,7 @@ onMounted(() => {
 })
 
 watch(
-  [xStep, yStep, message],
+  [xStep, yStep, message, opacity],
   redraw
 )
 
@@ -72,8 +73,10 @@ const fileChange = (e: Event) => {
 </script>
 
 <template>
-  <input type="number" v-model="xStep" />
+  <input type="range" min="100" max="1000" step="50" v-model="xStep" />
+  <input type="range" min="50" max="500" step="10" v-model="yStep" />
   <input type="number" v-model="yStep" />
+  <input type="range" min="0.1" max="1" step="0.1" v-model="opacity" />
   <input type="text" v-model="message" />
   <input type="file" @change="fileChange" />
 
