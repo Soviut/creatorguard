@@ -42,21 +42,18 @@ function redraw() {
       for (let x = 0; x < xCount; x++) {
         // zig zag horizontally
         const xOffset = y % 2 ? xStep.value / 2 : 0
-        ctx.strokeText(message.value, x * xStep.value + xOffset, y * yStep.value)
+        ctx.strokeText(
+          message.value,
+          x * xStep.value + xOffset,
+          y * yStep.value
+        )
         ctx.fillText(message.value, x * xStep.value + xOffset, y * yStep.value)
       }
     }
   }
 }
 
-onMounted(() => {
-  img.src = '/test.jpg'
-})
-
-watch(
-  [xStep, yStep, message, opacity],
-  redraw
-)
+watch([xStep, yStep, message, opacity], redraw)
 
 const fileToDataURL = async (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -100,9 +97,13 @@ const selectImage = (i: number) => {
       <input type="file" multiple @change="fileChange" />
 
       <section>
-        <ul class="grid grid-cols-3 gap-5 items-center">
+        <ul class="grid grid-cols-3 gap-5">
           <li v-for="(image, i) in images" :key="i">
-            <button @click="selectImage(i)">
+            <button
+              @click="selectImage(i)"
+              class="w-full h-full p-3 rounded items-center border aspect-square"
+              :class="i === imageIndex ? 'border-teal-500' : 'border-gray-700'"
+            >
               <img :src="image" class="max-w-full" />
             </button>
           </li>
@@ -110,8 +111,8 @@ const selectImage = (i: number) => {
       </section>
     </div>
 
-    <div class="col-span-2 flex p-5 items-center justify-center overflow-auto">
-      <canvas ref="canvas" class="max-w-full"></canvas>
+    <div class="col-span-2 flex flex-col p-5 overflow-auto">
+      <canvas ref="canvas" class="max-w-full max-h-full mx-auto"></canvas>
     </div>
   </div>
 </template>
