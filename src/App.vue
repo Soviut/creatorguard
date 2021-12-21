@@ -65,7 +65,9 @@ const fileChange = (e: Event) => {
   // TODO: allow multiple files
   // target.files?[0]
 
-  reader.readAsDataURL(target.files![0])
+  if (target.files?.length) {
+    reader.readAsDataURL(target.files[0])
+  }
 }
 </script>
 
