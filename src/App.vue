@@ -8,6 +8,9 @@ const yStep = ref(250)
 const opacity = ref(0.3)
 const message = ref('example.com')
 
+const images = ref<string[]>([])
+const imageIndex = ref(0)
+
 const img = new Image()
 img.addEventListener('load', redraw, false)
 
@@ -55,35 +58,60 @@ watch(
   redraw
 )
 
-const reader = new FileReader()
-reader.addEventListener('load', (e: Event) => {
-  img.src = (e.target as FileReader).result as string
-}, false)
+const fileToDataURL = async (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
 
-const fileChange = (e: Event) => {
+    reader.onload = (e: Event) => {
+      resolve((e.target as FileReader).result as string)
+    }
+    reader.onerror = (e: Event) => {
+      reject(reader.error)
+    }
+
+    reader.readAsDataURL(file)
+  })
+}
+
+const fileChange = async (e: Event) => {
   const target = e.target as HTMLInputElement
 
-  // TODO: allow multiple files
-  // target.files?[0]
-
-  if (target.files?.length) {
-    reader.readAsDataURL(target.files[0])
+  if (target.files) {
+    const files = Array.from(target.files)
+    images.value = await Promise.all(files.map(fileToDataURL))
+    imageIndex.value = 0
+    img.src = images.value[imageIndex.value]
   }
+}
+
+const selectImage = (i: number) => {
+  imageIndex.value = i
+  img.src = images.value[imageIndex.value]
 }
 </script>
 
 <template>
-  <div class="grid grid-cols-2 h-screen">
-    <div class="bg-gray-900">
+  <div class="grid grid-cols-3 h-screen">
+    <div class="p-5 bg-gray-900 overflow-auto">
       <input type="range" min="100" max="1000" step="50" v-model="xStep" />
       <input type="range" min="50" max="500" step="10" v-model="yStep" />
       <input type="range" min="0.1" max="1" step="0.1" v-model="opacity" />
       <input type="text" v-model="message" />
-      <input type="file" @change="fileChange" />
+      <input type="file" multiple @change="fileChange" />
+
+      <section>
+        <ul class="grid grid-cols-3 gap-5 items-center">
+          <li v-for="(image, i) in images" :key="i">
+            <button @click="selectImage(i)">
+              <img :src="image" class="max-w-full" />
+            </button>
+          </li>
+        </ul>
+      </section>
     </div>
 
-    <div class="flex p-5 items-center">
-      <canvas ref="canvas" class="w-full"></canvas>
+    <div class="col-span-2 flex p-5 items-center justify-center overflow-auto">
+      <canvas ref="canvas" class="max-w-full"></canvas>
     </div>
   </div>
 </template>
