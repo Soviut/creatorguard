@@ -73,11 +73,17 @@ const fileChange = (e: Event) => {
 </script>
 
 <template>
-  <input type="range" min="100" max="1000" step="50" v-model="xStep" />
-  <input type="range" min="50" max="500" step="10" v-model="yStep" />
-  <input type="range" min="0.1" max="1" step="0.1" v-model="opacity" />
-  <input type="text" v-model="message" />
-  <input type="file" @change="fileChange" />
+  <div class="grid grid-cols-2 h-screen">
+    <div class="bg-gray-900">
+      <input type="range" min="100" max="1000" step="50" v-model="xStep" />
+      <input type="range" min="50" max="500" step="10" v-model="yStep" />
+      <input type="range" min="0.1" max="1" step="0.1" v-model="opacity" />
+      <input type="text" v-model="message" />
+      <input type="file" @change="fileChange" />
+    </div>
 
-  <canvas ref="canvas" class="w-1/2"></canvas>
+    <div class="flex p-5 items-center">
+      <canvas ref="canvas" class="w-full"></canvas>
+    </div>
+  </div>
 </template>
