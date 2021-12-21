@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 
-const xStep = ref(550)
+const xStep = ref(500)
 const yStep = ref(250)
 const opacity = ref(0.3)
 const message = ref('example.com')
@@ -75,7 +75,6 @@ const fileChange = (e: Event) => {
 <template>
   <input type="range" min="100" max="1000" step="50" v-model="xStep" />
   <input type="range" min="50" max="500" step="10" v-model="yStep" />
-  <input type="number" v-model="yStep" />
   <input type="range" min="0.1" max="1" step="0.1" v-model="opacity" />
   <input type="text" v-model="message" />
   <input type="file" @change="fileChange" />
