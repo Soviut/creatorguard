@@ -8,8 +8,9 @@ const yStep = ref(250)
 const message = ref('example.com')
 
 const img = new Image()
+img.addEventListener('load', redraw, false)
 
-const redraw = () => {
+function redraw() {
   if (canvas.value) {
     canvas.value.width = img.width
     canvas.value.height = img.height
@@ -45,8 +46,6 @@ const redraw = () => {
 }
 
 onMounted(() => {
-  img.addEventListener('load', redraw, false)
-
   img.src = '/test.jpg'
 })
 
@@ -54,12 +53,27 @@ watch(
   [xStep, yStep, message],
   redraw
 )
+
+const reader = new FileReader()
+reader.addEventListener('load', (e: Event) => {
+  img.src = (e.target as FileReader).result as string
+}, false)
+
+const fileChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+
+  // TODO: allow multiple files
+  // target.files?[0]
+
+  reader.readAsDataURL(target.files![0])
+}
 </script>
 
 <template>
   <input type="number" v-model="xStep" />
   <input type="number" v-model="yStep" />
   <input type="text" v-model="message" />
+  <input type="file" @change="fileChange" />
 
   <canvas ref="canvas" class="w-1/2"></canvas>
 </template>
