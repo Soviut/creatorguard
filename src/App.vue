@@ -11,23 +11,20 @@ const message = ref('example.com')
 const images = ref<string[]>([])
 const imageIndex = ref(0)
 
-const preview = ref<string>('')
+const previewImage = ref<string>('')
 
 const img = new Image()
 img.addEventListener('load', redraw, false)
 
-function redraw() {
+async function redraw() {
   if (canvas.value) {
     canvas.value.width = img.width
     canvas.value.height = img.height
 
     const ctx = canvas.value.getContext('2d')!
 
-    ctx.drawImage(img, 0, 0)
-
     ctx.fillStyle = 'white'
     ctx.lineWidth = 6
-    ctx.globalAlpha = opacity.value
 
     ctx.textBaseline = 'hanging'
     ctx.font = '32px sans-serif'
@@ -53,8 +50,39 @@ function redraw() {
       }
     }
 
-    preview.value = canvas.value.toDataURL()
+    ctx.resetTransform()
+
+    const watermark = await dataURLtoImage(canvas.value.toDataURL())
+
+    // compositing
+    ctx.clearRect(0, 0, img.width, img.height)
+
+    ctx.drawImage(img, 0, 0)
+    ctx.globalAlpha = opacity.value
+    ctx.drawImage(watermark, 0, 0)
+
+    previewImage.value = canvas.value.toDataURL()
   }
+}
+
+async function dataURLtoImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+
+    image.onload = () => {
+      resolve(image)
+      image.onload = null
+      image.onerror = null
+    }
+
+    image.onerror = (err) => {
+      reject(err)
+      image.onload = null
+      image.onerror = null
+    }
+
+    image.src = url
+  })
 }
 
 watch([xStep, yStep, message, opacity], redraw)
@@ -137,7 +165,7 @@ const selectImage = (i: number) => {
     </div>
 
     <div class="col-span-2 flex flex-col p-5 justify-center overflow-auto">
-      <img :src="preview" class="max-w-full max-h-full mx-auto" />
+      <img :src="previewImage" class="max-w-full max-h-full mx-auto" />
     </div>
   </div>
 
