@@ -11,6 +11,8 @@ const message = ref('example.com')
 const images = ref<string[]>([])
 const imageIndex = ref(0)
 
+const preview = ref<string>('')
+
 const img = new Image()
 img.addEventListener('load', redraw, false)
 
@@ -50,6 +52,8 @@ function redraw() {
         ctx.fillText(message.value, x * xStep.value + xOffset, y * yStep.value)
       }
     }
+
+    preview.value = canvas.value.toDataURL()
   }
 }
 
@@ -132,8 +136,10 @@ const selectImage = (i: number) => {
       </section>
     </div>
 
-    <div class="col-span-2 flex flex-col p-5 overflow-auto">
-      <canvas ref="canvas" class="max-w-full max-h-full mx-auto"></canvas>
+    <div class="col-span-2 flex flex-col p-5 justify-center overflow-auto">
+      <img :src="preview" class="max-w-full max-h-full mx-auto" />
     </div>
   </div>
+
+  <canvas ref="canvas" class="hidden"></canvas>
 </template>
