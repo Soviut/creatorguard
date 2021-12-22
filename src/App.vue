@@ -50,13 +50,13 @@ async function redraw() {
       }
     }
 
-    ctx.resetTransform()
-
     const watermark = await dataURLtoImage(canvas.value.toDataURL())
 
-    // compositing
+    // clear for compositing
+    ctx.resetTransform()
     ctx.clearRect(0, 0, img.width, img.height)
 
+    // compositing
     ctx.drawImage(img, 0, 0)
     ctx.globalAlpha = opacity.value
     ctx.drawImage(watermark, 0, 0)
