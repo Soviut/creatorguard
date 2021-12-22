@@ -92,17 +92,17 @@ const selectImage = (i: number) => {
     <div class="p-5 bg-gray-900 text-white overflow-auto">
       <section class="mb-8 space-y-3">
         <div>
-          <label></label>
+          <label>Horizontal Spacing</label>
           <input type="range" min="100" max="1000" step="50" v-model="xStep" />
         </div>
 
         <div>
-          <label></label>
+          <label>Vertical Spacing</label>
           <input type="range" min="50" max="500" step="10" v-model="yStep" />
         </div>
 
         <div>
-          <label></label>
+          <label>Opacity</label>
           <input type="range" min="0.1" max="1" step="0.1" v-model="opacity" />
         </div>
 
