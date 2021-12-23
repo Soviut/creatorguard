@@ -121,30 +121,30 @@ const selectImage = (i: number) => {
 
 <template>
   <div class="grid grid-cols-3 h-screen">
-    <div class="p-5 bg-gray-900 text-white overflow-auto">
+    <div class="p-5 bg-gray-900 overflow-auto">
       <section class="mb-8 space-y-3">
         <div>
-          <label>Horizontal Spacing</label>
+          <label class="text-white">Horizontal Spacing</label>
           <input type="range" min="100" max="1000" step="50" v-model="xStep" />
         </div>
 
         <div>
-          <label>Vertical Spacing</label>
+          <label class="text-white">Vertical Spacing</label>
           <input type="range" min="50" max="500" step="10" v-model="yStep" />
         </div>
 
         <div>
-          <label>Opacity</label>
+          <label class="text-white">Opacity</label>
           <input type="range" min="0.1" max="1" step="0.1" v-model="opacity" />
         </div>
 
         <div>
-          <label>Message</label>
+          <label class="text-white">Message</label>
           <input type="text" v-model="message" />
         </div>
 
         <div>
-          <label>File</label>
+          <label class="text-white">File</label>
           <input type="file" multiple @change="fileChange" />
         </div>
       </section>
