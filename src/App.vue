@@ -131,6 +131,7 @@ const downloadAll = async () => {
   // TODO: handle jpeg
   // zip.file('image.png', stripDataUrl(previewImage.value), { base64: true })
 
+  // TODO: process each image through the canvas
   images.value.forEach((image, i) => {
     zip.file(`image-${i}.png`, stripDataUrl(image), { base64: true })
   })
