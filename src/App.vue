@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
+import JSZip from 'jszip'
+import { saveAs } from 'file-saver'
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 
@@ -62,6 +64,7 @@ async function redraw() {
     ctx.drawImage(watermark, 0, 0)
 
     previewImage.value = canvas.value.toDataURL()
+    console.log(previewImage.value)
   }
 }
 
@@ -117,6 +120,21 @@ const selectImage = (i: number) => {
   imageIndex.value = i
   img.src = images.value[imageIndex.value]
 }
+
+const stripDataUrl = (url: string) =>
+  url.replace(/^data:.*?,/, '')
+
+const downloadAll = async () => {
+  const zip = new JSZip()
+
+  // TODO: include "watermark produced by URL"
+  zip.file('hello.txt', 'ding!\n')
+  // TODO: handle jpeg
+  zip.file('image.png', stripDataUrl(previewImage.value), { base64: true })
+
+  const content = await zip.generateAsync({ type: 'blob' })
+  saveAs(content, 'download.zip')
+}
 </script>
 
 <template>
@@ -146,6 +164,12 @@ const selectImage = (i: number) => {
         <div>
           <label class="text-white">File</label>
           <input type="file" multiple @change="fileChange" />
+        </div>
+
+        <div>
+          <button class="text-white" @click="downloadAll">
+            Download All
+          </button>
         </div>
       </section>
 
