@@ -64,7 +64,6 @@ async function redraw() {
     ctx.drawImage(watermark, 0, 0)
 
     previewImage.value = canvas.value.toDataURL()
-    console.log(previewImage.value)
   }
 }
 
@@ -130,7 +129,11 @@ const downloadAll = async () => {
   // TODO: include "watermark produced by URL"
   zip.file('hello.txt', 'ding!\n')
   // TODO: handle jpeg
-  zip.file('image.png', stripDataUrl(previewImage.value), { base64: true })
+  // zip.file('image.png', stripDataUrl(previewImage.value), { base64: true })
+
+  images.value.forEach((image, i) => {
+    zip.file(`image-${i}.png`, stripDataUrl(image), { base64: true })
+  })
 
   const content = await zip.generateAsync({ type: 'blob' })
   saveAs(content, 'download.zip')
