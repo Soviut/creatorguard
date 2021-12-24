@@ -129,7 +129,6 @@ const downloadAll = async () => {
   // TODO: include "watermark produced by URL"
   zip.file('hello.txt', 'ding!\n')
   // TODO: handle jpeg
-  // zip.file('image.png', stripDataUrl(previewImage.value), { base64: true })
 
   // TODO: process each image through the canvas
   images.value.forEach((image, i) => {
