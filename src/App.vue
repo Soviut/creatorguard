@@ -10,7 +10,7 @@ const yStep = ref(250)
 const opacity = ref(0.3)
 const message = ref('example.com')
 
-const images = ref<string[]>([])
+const images = ref<HTMLImageElement[]>([])
 const imageIndex = ref(0)
 
 const previewImage = ref<string>('')
@@ -67,6 +67,23 @@ async function redraw() {
   }
 }
 
+watch([xStep, yStep, message, opacity], redraw)
+
+const fileToDataURL = async (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+
+    reader.onload = (e: Event) => {
+      resolve((e.target as FileReader).result as string)
+    }
+    reader.onerror = (e: Event) => {
+      reject(reader.error)
+    }
+
+    reader.readAsDataURL(file)
+  })
+}
+
 async function dataURLtoImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image()
@@ -86,22 +103,9 @@ async function dataURLtoImage(url: string): Promise<HTMLImageElement> {
     image.src = url
   })
 }
-
-watch([xStep, yStep, message, opacity], redraw)
-
-const fileToDataURL = async (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-
-    reader.onload = (e: Event) => {
-      resolve((e.target as FileReader).result as string)
-    }
-    reader.onerror = (e: Event) => {
-      reject(reader.error)
-    }
-
-    reader.readAsDataURL(file)
-  })
+const fileToImage = async (file: File): Promise<HTMLImageElement> => {
+  const dataUrl = await fileToDataURL(file)
+  return dataURLtoImage(dataUrl)
 }
 
 const fileChange = async (e: Event) => {
@@ -109,15 +113,13 @@ const fileChange = async (e: Event) => {
 
   if (target.files) {
     const files = Array.from(target.files)
-    images.value = await Promise.all(files.map(fileToDataURL))
+    images.value = await Promise.all(files.map(fileToImage))
     imageIndex.value = 0
-    img.src = images.value[imageIndex.value]
   }
 }
 
 const selectImage = (i: number) => {
   imageIndex.value = i
-  img.src = images.value[imageIndex.value]
 }
 
 const stripDataUrl = (url: string) =>
@@ -184,7 +186,7 @@ const downloadAll = async () => {
               class="w-full h-full p-3 rounded items-center border aspect-square"
               :class="i === imageIndex ? 'border-teal-500' : 'border-gray-700'"
             >
-              <img :src="image" class="max-w-full" />
+              <img :src="image.src" class="max-w-full" />
             </button>
           </li>
         </ul>
