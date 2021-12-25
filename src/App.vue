@@ -11,14 +11,11 @@ const opacity = ref(0.3)
 const message = ref('example.com')
 
 const images = ref<HTMLImageElement[]>([])
-const imageIndex = ref(0)
+const imageIndex = ref(-1)
 
 const previewImage = ref<string>('')
 
-const img = new Image()
-img.addEventListener('load', redraw, false)
-
-async function redraw() {
+async function redraw(img: HTMLImageElement) {
   if (canvas.value) {
     canvas.value.width = img.width
     canvas.value.height = img.height
@@ -67,7 +64,10 @@ async function redraw() {
   }
 }
 
-watch([xStep, yStep, message, opacity], redraw)
+watch(
+  [xStep, yStep, message, opacity, imageIndex],
+  () => redraw(images.value[imageIndex.value])
+)
 
 const fileToDataURL = async (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
