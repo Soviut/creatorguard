@@ -133,9 +133,13 @@ const downloadAll = async () => {
   // TODO: handle jpeg
 
   // TODO: process each image through the canvas
-  images.value.forEach((image, i) => {
-    zip.file(`image-${i}.png`, stripDataUrl(image), { base64: true })
-  })
+  // images.value.forEach((image, i) => {
+  //   zip.file(`image-${i}.png`, image.src, { base64: true })
+  // })
+
+  const output = canvas.value?.toDataURL('image/png')
+
+  zip.file(`image-X.png`, stripDataUrl(output!), { base64: true })
 
   const content = await zip.generateAsync({ type: 'blob' })
   saveAs(content, 'download.zip')
