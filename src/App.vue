@@ -15,7 +15,7 @@ const imageIndex = ref(-1)
 
 const previewImage = ref<string>('')
 
-async function redraw(img: HTMLImageElement) {
+async function redraw(img: HTMLImageElement): Promise<string> {
   if (canvas.value) {
     canvas.value.width = img.width
     canvas.value.height = img.height
@@ -60,13 +60,16 @@ async function redraw(img: HTMLImageElement) {
     ctx.globalAlpha = opacity.value
     ctx.drawImage(watermark, 0, 0)
 
-    previewImage.value = canvas.value.toDataURL()
+    return canvas.value.toDataURL()
+  } else {
+    return ''
   }
 }
 
 watch(
   [xStep, yStep, message, opacity, imageIndex],
-  () => redraw(images.value[imageIndex.value])
+  async () =>
+    previewImage.value = await redraw(images.value[imageIndex.value])
 )
 
 const fileToDataURL = async (file: File): Promise<string> => {
