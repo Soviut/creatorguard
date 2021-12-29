@@ -136,12 +136,12 @@ const downloadAll = async () => {
   zip.file('hello.txt', 'ding!\n')
   // TODO: handle jpeg
 
-  // TODO: process each image through the canvas
-  const dataUrls = await Promise.all(images.value.map((image) => draw(image)))
-
-  dataUrls.forEach((dataUrl, i) => {
-    zip.file(`image-${i}.png`, stripDataUrl(dataUrl), { base64: true })
-  })
+  // process each image through the canvas sequentially
+  // parallel won't work without multiple canvases
+  for (const image of images.value) {
+    const dataUrl = await draw(image)
+    zip.file(`image-${Math.floor(Math.random() * 1000)}.png`, stripDataUrl(dataUrl), { base64: true })
+  }
 
   const content = await zip.generateAsync({ type: 'blob' })
   saveAs(content, 'download.zip')
