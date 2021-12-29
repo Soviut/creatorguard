@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
+
+interface ImageFile {
+  image: HTMLImageElement
+  file: File
+}
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 
@@ -10,8 +15,7 @@ const yStep = ref(250)
 const opacity = ref(0.3)
 const message = ref('example.com')
 
-const filenames = ref<string[]>([])
-const images = ref<HTMLImageElement[]>([])
+const images = ref<ImageFile[]>([])
 const imageIndex = ref(-1)
 
 const previewImage = ref<string>('')
@@ -69,7 +73,8 @@ async function draw(img: HTMLImageElement): Promise<string> {
 
 watch(
   [xStep, yStep, message, opacity, imageIndex],
-  async () => (previewImage.value = await draw(images.value[imageIndex.value]))
+  async () =>
+    (previewImage.value = await draw(images.value[imageIndex.value].image))
 )
 
 const fileToDataURL = async (file: File): Promise<string> => {
@@ -116,10 +121,13 @@ const fileChange = async (e: Event) => {
 
   if (target.files) {
     const files = Array.from(target.files)
-    filenames.value = files.map((f) => f.name)
-    images.value = await Promise.all(files.map(fileToImage))
+    const imgs = await Promise.all(files.map(fileToImage))
+    images.value = files.map<ImageFile>((file, i) => ({
+      file,
+      image: imgs[i],
+    }))
     imageIndex.value = 0
-    previewImage.value = await draw(images.value[imageIndex.value])
+    previewImage.value = await draw(images.value[imageIndex.value].image)
   }
 }
 
@@ -139,15 +147,9 @@ const downloadAll = async () => {
   // process each image through the canvas sequentially
   // parallel won't work without multiple canvases
   for (let i = 0; i < images.value.length; i++) {
-    const image = images.value[i]
-    const filename = filenames.value[i]
-    console.log(filename)
-    const dataUrl = await draw(image)
-    zip.file(
-      filename,
-      stripDataUrl(dataUrl),
-      { base64: true }
-    )
+    const imageFile = images.value[i]
+    const dataUrl = await draw(imageFile.image)
+    zip.file(imageFile.file.name, stripDataUrl(dataUrl), { base64: true })
   }
 
   const content = await zip.generateAsync({ type: 'blob' })
@@ -191,13 +193,13 @@ const downloadAll = async () => {
 
       <section>
         <ul class="grid grid-cols-3 gap-5">
-          <li v-for="(image, i) in images" :key="i">
+          <li v-for="(imageFile, i) in images" :key="i">
             <button
               @click="selectImage(i)"
               class="w-full h-full p-3 rounded items-center border aspect-square"
               :class="i === imageIndex ? 'border-teal-500' : 'border-gray-700'"
             >
-              <img :src="image.src" class="max-w-full" />
+              <img :src="imageFile.image.src" class="max-w-full" />
             </button>
           </li>
         </ul>
