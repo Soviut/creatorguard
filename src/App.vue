@@ -118,6 +118,7 @@ const fileChange = async (e: Event) => {
     const files = Array.from(target.files)
     images.value = await Promise.all(files.map(fileToImage))
     imageIndex.value = 0
+    previewImage.value = await redraw(images.value[imageIndex.value])
   }
 }
 
