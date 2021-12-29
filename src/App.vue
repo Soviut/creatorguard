@@ -15,7 +15,7 @@ const imageIndex = ref(-1)
 
 const previewImage = ref<string>('')
 
-async function redraw(img: HTMLImageElement): Promise<string> {
+async function draw(img: HTMLImageElement): Promise<string> {
   if (canvas.value) {
     canvas.value.width = img.width
     canvas.value.height = img.height
@@ -69,7 +69,7 @@ async function redraw(img: HTMLImageElement): Promise<string> {
 watch(
   [xStep, yStep, message, opacity, imageIndex],
   async () =>
-    previewImage.value = await redraw(images.value[imageIndex.value])
+    previewImage.value = await draw(images.value[imageIndex.value])
 )
 
 const fileToDataURL = async (file: File): Promise<string> => {
@@ -118,7 +118,7 @@ const fileChange = async (e: Event) => {
     const files = Array.from(target.files)
     images.value = await Promise.all(files.map(fileToImage))
     imageIndex.value = 0
-    previewImage.value = await redraw(images.value[imageIndex.value])
+    previewImage.value = await draw(images.value[imageIndex.value])
   }
 }
 
@@ -137,13 +137,11 @@ const downloadAll = async () => {
   // TODO: handle jpeg
 
   // TODO: process each image through the canvas
-  // images.value.forEach((image, i) => {
-  //   zip.file(`image-${i}.png`, image.src, { base64: true })
-  // })
+  const dataUrls = await Promise.all(images.value.map((image) => draw(image)))
 
-  const output = canvas.value?.toDataURL('image/png')
-
-  zip.file(`image-X.png`, stripDataUrl(output!), { base64: true })
+  dataUrls.forEach((dataUrl, i) => {
+    zip.file(`image-${i}.png`, stripDataUrl(dataUrl), { base64: true })
+  })
 
   const content = await zip.generateAsync({ type: 'blob' })
   saveAs(content, 'download.zip')
