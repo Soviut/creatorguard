@@ -10,6 +10,7 @@ const yStep = ref(250)
 const opacity = ref(0.3)
 const message = ref('example.com')
 
+const filenames = ref<string[]>([])
 const images = ref<HTMLImageElement[]>([])
 const imageIndex = ref(-1)
 
@@ -68,8 +69,7 @@ async function draw(img: HTMLImageElement): Promise<string> {
 
 watch(
   [xStep, yStep, message, opacity, imageIndex],
-  async () =>
-    previewImage.value = await draw(images.value[imageIndex.value])
+  async () => (previewImage.value = await draw(images.value[imageIndex.value]))
 )
 
 const fileToDataURL = async (file: File): Promise<string> => {
@@ -116,6 +116,7 @@ const fileChange = async (e: Event) => {
 
   if (target.files) {
     const files = Array.from(target.files)
+    filenames.value = files.map((f) => f.name)
     images.value = await Promise.all(files.map(fileToImage))
     imageIndex.value = 0
     previewImage.value = await draw(images.value[imageIndex.value])
@@ -126,8 +127,7 @@ const selectImage = (i: number) => {
   imageIndex.value = i
 }
 
-const stripDataUrl = (url: string) =>
-  url.replace(/^data:.*?,/, '')
+const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
 
 const downloadAll = async () => {
   const zip = new JSZip()
@@ -138,9 +138,16 @@ const downloadAll = async () => {
 
   // process each image through the canvas sequentially
   // parallel won't work without multiple canvases
-  for (const image of images.value) {
+  for (let i = 0; i < images.value.length; i++) {
+    const image = images.value[i]
+    const filename = filenames.value[i]
+    console.log(filename)
     const dataUrl = await draw(image)
-    zip.file(`image-${Math.floor(Math.random() * 1000)}.png`, stripDataUrl(dataUrl), { base64: true })
+    zip.file(
+      filename,
+      stripDataUrl(dataUrl),
+      { base64: true }
+    )
   }
 
   const content = await zip.generateAsync({ type: 'blob' })
@@ -178,9 +185,7 @@ const downloadAll = async () => {
         </div>
 
         <div>
-          <button class="text-white" @click="downloadAll">
-            Download All
-          </button>
+          <button class="text-white" @click="downloadAll">Download All</button>
         </div>
       </section>
 
