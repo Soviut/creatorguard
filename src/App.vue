@@ -163,7 +163,7 @@ const downloadAll = async () => {
       <section v-if="images.length === 0">
         <div>
           <label class="text-white">File</label>
-          <input type="file" multiple @change="fileChange" />
+          <input type="file" accept="image/*" multiple @change="fileChange" />
         </div>
       </section>
 
