@@ -160,7 +160,14 @@ const downloadAll = async () => {
 <template>
   <div class="grid grid-cols-3 h-screen">
     <div class="p-5 bg-gray-900 overflow-auto">
-      <section class="mb-8 space-y-3">
+      <section v-if="images.length === 0">
+        <div>
+          <label class="text-white">File</label>
+          <input type="file" multiple @change="fileChange" />
+        </div>
+      </section>
+
+      <section v-if="images.length" class="mb-8 space-y-3">
         <div>
           <label class="text-white">Horizontal Spacing</label>
           <input type="range" min="100" max="1000" step="50" v-model="xStep" />
@@ -179,11 +186,6 @@ const downloadAll = async () => {
         <div>
           <label class="text-white">Message</label>
           <input type="text" v-model="message" />
-        </div>
-
-        <div>
-          <label class="text-white">File</label>
-          <input type="file" multiple @change="fileChange" />
         </div>
 
         <div>
