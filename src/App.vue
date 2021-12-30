@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, withCtx } from 'vue'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 
@@ -19,12 +19,12 @@ const message = ref('example.com')
 const images = ref<ImageFile[]>([])
 const imageIndex = ref(-1)
 
-const previewImage = ref<string>('')
+// const previewImage = ref<string>('')
 
 async function draw(img: HTMLImageElement): Promise<string> {
   if (watermarkCanvas.value && compositeCanvas.value) {
-    watermarkCanvas.value.width = img.width
-    watermarkCanvas.value.height = img.height
+    watermarkCanvas.value.width = 512
+    watermarkCanvas.value.height = 512
 
     const watermarkCtx = watermarkCanvas.value.getContext('2d')!
 
@@ -35,25 +35,28 @@ async function draw(img: HTMLImageElement): Promise<string> {
     watermarkCtx.font = '32px sans-serif'
 
     // make watermark twice as wide and twice as tall
-    const xCount = Math.ceil((img.width * 2) / xStep.value)
-    const yCount = Math.ceil((img.height * 2) / yStep.value)
+    // const xCount = Math.ceil((img.width * 2) / xStep.value)
+    // const yCount = Math.ceil((img.height * 2) / yStep.value)
 
     // then rotate and translate up by height to center it on an angle
-    watermarkCtx.rotate(0.5)
-    watermarkCtx.translate(0, -img.height)
+    // watermarkCtx.rotate(0.5)
+    // watermarkCtx.translate(0, -img.height)
 
-    for (let y = 0; y < yCount; y++) {
-      for (let x = 0; x < xCount; x++) {
-        // zig zag horizontally
-        const xOffset = y % 2 ? xStep.value / 2 : 0
-        watermarkCtx.strokeText(
-          message.value,
-          x * xStep.value + xOffset,
-          y * yStep.value
-        )
-        watermarkCtx.fillText(message.value, x * xStep.value + xOffset, y * yStep.value)
-      }
-    }
+    // for (let y = 0; y < yCount; y++) {
+    //   for (let x = 0; x < xCount; x++) {
+    //     // zig zag horizontally
+    //     const xOffset = y % 2 ? xStep.value / 2 : 0
+    //     watermarkCtx.strokeText(
+    //       message.value,
+    //       x * xStep.value + xOffset,
+    //       y * yStep.value
+    //     )
+    //     watermarkCtx.fillText(message.value, x * xStep.value + xOffset, y * yStep.value)
+    //   }
+    // }
+
+    watermarkCtx.strokeText(message.value, 0, 0)
+    watermarkCtx.fillText(message.value, 0, 0)
 
     compositeCanvas.value.width = img.width
     compositeCanvas.value.height = img.height
@@ -64,7 +67,14 @@ async function draw(img: HTMLImageElement): Promise<string> {
     compositeCtx.drawImage(img, 0, 0)
 
     compositeCtx.globalAlpha = opacity.value
-    compositeCtx.drawImage(watermarkCanvas.value, 0, 0)
+
+    const pattern = compositeCtx.createPattern(watermarkCanvas.value, 'repeat')
+    compositeCtx.fillStyle = pattern!
+
+    compositeCtx.rotate(0.5)
+    compositeCtx.fillRect(0, 0, img.width, img.height)
+
+    // compositeCtx.drawImage(watermarkCanvas.value, 0, 0)
 
     return compositeCanvas.value.toDataURL()
   } else {
@@ -75,7 +85,7 @@ async function draw(img: HTMLImageElement): Promise<string> {
 watch(
   [xStep, yStep, message, opacity, imageIndex],
   async () =>
-    (previewImage.value = await draw(images.value[imageIndex.value].image))
+    await draw(images.value[imageIndex.value].image)
 )
 
 const fileToDataURL = async (file: File): Promise<string> => {
@@ -128,7 +138,7 @@ const fileChange = async (e: Event) => {
       image: imgs[i],
     }))
     imageIndex.value = 0
-    previewImage.value = await draw(images.value[imageIndex.value].image)
+    await draw(images.value[imageIndex.value].image)
   }
 }
 
@@ -181,7 +191,13 @@ const downloadAll = async () => {
 
         <div>
           <label class="text-white">Opacity</label>
-          <input type="range" min="0.1" max="1.0" step="0.1" v-model="opacity" />
+          <input
+            type="range"
+            min="0.1"
+            max="1.0"
+            step="0.1"
+            v-model="opacity"
+          />
         </div>
 
         <div>
@@ -210,10 +226,10 @@ const downloadAll = async () => {
     </div>
 
     <div class="col-span-2 flex flex-col p-5 justify-center overflow-auto">
-      <img :src="previewImage" class="max-w-full max-h-full mx-auto" />
+      <!-- <img :src="previewImage" class="max-w-full max-h-full mx-auto" /> -->
+      <canvas ref="compositeCanvas" class="max-w-full max-h-full mx-auto"></canvas>
     </div>
   </div>
 
   <canvas ref="watermarkCanvas" class="hidden"></canvas>
-  <canvas ref="compositeCanvas" class="hidden"></canvas>
 </template>
