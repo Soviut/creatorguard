@@ -8,7 +8,8 @@ interface ImageFile {
   file: File
 }
 
-const canvas = ref<HTMLCanvasElement | null>(null)
+const watermarkCanvas = ref<HTMLCanvasElement | null>(null)
+const compositeCanvas = ref<HTMLCanvasElement | null>(null)
 
 const xStep = ref(500)
 const yStep = ref(250)
@@ -21,51 +22,52 @@ const imageIndex = ref(-1)
 const previewImage = ref<string>('')
 
 async function draw(img: HTMLImageElement): Promise<string> {
-  if (canvas.value) {
-    canvas.value.width = img.width
-    canvas.value.height = img.height
+  if (watermarkCanvas.value && compositeCanvas.value) {
+    watermarkCanvas.value.width = img.width
+    watermarkCanvas.value.height = img.height
 
-    const ctx = canvas.value.getContext('2d')!
+    const watermarkCtx = watermarkCanvas.value.getContext('2d')!
 
-    ctx.fillStyle = 'white'
-    ctx.lineWidth = 6
+    watermarkCtx.fillStyle = 'white'
+    watermarkCtx.lineWidth = 6
 
-    ctx.textBaseline = 'hanging'
-    ctx.font = '32px sans-serif'
+    watermarkCtx.textBaseline = 'hanging'
+    watermarkCtx.font = '32px sans-serif'
 
     // make watermark twice as wide and twice as tall
     const xCount = Math.ceil((img.width * 2) / xStep.value)
     const yCount = Math.ceil((img.height * 2) / yStep.value)
 
     // then rotate and translate up by height to center it on an angle
-    ctx.rotate(0.5)
-    ctx.translate(0, -img.height)
+    watermarkCtx.rotate(0.5)
+    watermarkCtx.translate(0, -img.height)
 
     for (let y = 0; y < yCount; y++) {
       for (let x = 0; x < xCount; x++) {
         // zig zag horizontally
         const xOffset = y % 2 ? xStep.value / 2 : 0
-        ctx.strokeText(
+        watermarkCtx.strokeText(
           message.value,
           x * xStep.value + xOffset,
           y * yStep.value
         )
-        ctx.fillText(message.value, x * xStep.value + xOffset, y * yStep.value)
+        watermarkCtx.fillText(message.value, x * xStep.value + xOffset, y * yStep.value)
       }
     }
 
-    const watermark = await dataURLtoImage(canvas.value.toDataURL())
+    compositeCanvas.value.width = img.width
+    compositeCanvas.value.height = img.height
 
-    // clear for compositing
-    ctx.resetTransform()
-    ctx.clearRect(0, 0, img.width, img.height)
+    const compositeCtx = compositeCanvas.value.getContext('2d')!
 
     // compositing
-    ctx.drawImage(img, 0, 0)
-    ctx.globalAlpha = opacity.value
-    ctx.drawImage(watermark, 0, 0)
+    compositeCtx.drawImage(img, 0, 0)
 
-    return canvas.value.toDataURL()
+    const watermark = await dataURLtoImage(watermarkCanvas.value.toDataURL())
+    compositeCtx.globalAlpha = opacity.value
+    compositeCtx.drawImage(watermark, 0, 0)
+
+    return compositeCanvas.value.toDataURL()
   } else {
     return ''
   }
@@ -213,5 +215,6 @@ const downloadAll = async () => {
     </div>
   </div>
 
-  <canvas ref="canvas" class="hidden"></canvas>
+  <canvas ref="watermarkCanvas" class="hidden"></canvas>
+  <canvas ref="compositeCanvas" class="hidden"></canvas>
 </template>
