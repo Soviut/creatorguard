@@ -63,9 +63,8 @@ async function draw(img: HTMLImageElement): Promise<string> {
     // compositing
     compositeCtx.drawImage(img, 0, 0)
 
-    const watermark = await dataURLtoImage(watermarkCanvas.value.toDataURL())
     compositeCtx.globalAlpha = opacity.value
-    compositeCtx.drawImage(watermark, 0, 0)
+    compositeCtx.drawImage(watermarkCanvas.value, 0, 0)
 
     return compositeCanvas.value.toDataURL()
   } else {
