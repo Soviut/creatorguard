@@ -40,7 +40,7 @@ text.position.set(-5000, -5000)
 onMounted(() => {
   app = new Application({
     view: canvas.value!,
-    backgroundColor: 0x2c3e50,
+    backgroundAlpha: 0
   })
 
   app.stage.addChild(preview)
