@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref, watch, withCtx } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
+import { Application, BitmapText, Loader, Sprite, Texture, Text, Container } from 'pixi.js'
 
 interface ImageFile {
   image: HTMLImageElement
   file: File
 }
 
-const watermarkCanvas = ref<HTMLCanvasElement | null>(null)
-const compositeCanvas = ref<HTMLCanvasElement | null>(null)
+const canvas = ref<HTMLCanvasElement | null>(null)
 
 const xStep = ref(500)
 const yStep = ref(250)
@@ -19,73 +19,51 @@ const message = ref('example.com')
 const images = ref<ImageFile[]>([])
 const imageIndex = ref(-1)
 
-// const previewImage = ref<string>('')
+const currentImage = computed(() => images.value[imageIndex.value])
 
-async function draw(img: HTMLImageElement): Promise<string> {
-  if (watermarkCanvas.value && compositeCanvas.value) {
-    watermarkCanvas.value.width = 512
-    watermarkCanvas.value.height = 512
+let app: Application | null = null
 
-    const watermarkCtx = watermarkCanvas.value.getContext('2d')!
+const loader = new Loader()
 
-    watermarkCtx.fillStyle = 'white'
-    watermarkCtx.lineWidth = 6
+const preview = new Sprite()
 
-    watermarkCtx.textBaseline = 'hanging'
-    watermarkCtx.font = '32px sans-serif'
+const container = new Container()
+container.alpha = 0.5
 
-    // make watermark twice as wide and twice as tall
-    // const xCount = Math.ceil((img.width * 2) / xStep.value)
-    // const yCount = Math.ceil((img.height * 2) / yStep.value)
+const text = new Text('This is a test', {
+  fill: 0xffffff,
+  strokeThickness: 8,
+})
+// move off screen, we can't hide it without related sprites also hiding
+text.position.set(-5000, -5000)
 
-    // then rotate and translate up by height to center it on an angle
-    // watermarkCtx.rotate(0.5)
-    // watermarkCtx.translate(0, -img.height)
+onMounted(() => {
+  app = new Application({
+    view: canvas.value!,
+    backgroundColor: 0x2c3e50,
+  })
 
-    // for (let y = 0; y < yCount; y++) {
-    //   for (let x = 0; x < xCount; x++) {
-    //     // zig zag horizontally
-    //     const xOffset = y % 2 ? xStep.value / 2 : 0
-    //     watermarkCtx.strokeText(
-    //       message.value,
-    //       x * xStep.value + xOffset,
-    //       y * yStep.value
-    //     )
-    //     watermarkCtx.fillText(message.value, x * xStep.value + xOffset, y * yStep.value)
-    //   }
-    // }
+  app.stage.addChild(preview)
+  app.stage.addChild(text)
+  app.stage.addChild(container)
 
-    watermarkCtx.strokeText(message.value, 0, 0)
-    watermarkCtx.fillText(message.value, 0, 0)
-
-    compositeCanvas.value.width = img.width
-    compositeCanvas.value.height = img.height
-
-    const compositeCtx = compositeCanvas.value.getContext('2d')!
-
-    // compositing
-    compositeCtx.drawImage(img, 0, 0)
-
-    compositeCtx.globalAlpha = opacity.value
-
-    const pattern = compositeCtx.createPattern(watermarkCanvas.value, 'repeat')
-    compositeCtx.fillStyle = pattern!
-
-    compositeCtx.rotate(0.5)
-    compositeCtx.fillRect(0, 0, img.width, img.height)
-
-    // compositeCtx.drawImage(watermarkCanvas.value, 0, 0)
-
-    return compositeCanvas.value.toDataURL()
-  } else {
-    return ''
+  for (let y = 0; y < 5; y++) {
+    for (let x = 0; x < 5; x++) {
+      const sprite = Sprite.from(text.texture)
+      sprite.position.set(x * 200, y * 200)
+      container.addChild(sprite)
+    }
   }
-}
+})
 
 watch(
-  [xStep, yStep, message, opacity, imageIndex],
-  async () =>
-    await draw(images.value[imageIndex.value].image)
+  () => message.value,
+  (value) => text.text = value
+)
+
+watch(
+  () => opacity.value,
+  (value) => container.alpha = value
 )
 
 const fileToDataURL = async (file: File): Promise<string> => {
@@ -138,9 +116,17 @@ const fileChange = async (e: Event) => {
       image: imgs[i],
     }))
     imageIndex.value = 0
-    await draw(images.value[imageIndex.value].image)
+
+    preview.texture = Texture.from(currentImage.value.image)
+
+    // await draw(images.value[imageIndex.value].image)
   }
 }
+
+watch(
+  () => currentImage.value,
+  (value) => preview.texture = Texture.from(value.image)
+)
 
 const selectImage = (i: number) => {
   imageIndex.value = i
@@ -148,24 +134,24 @@ const selectImage = (i: number) => {
 
 const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
 
-const downloadAll = async () => {
-  const zip = new JSZip()
+// const downloadAll = async () => {
+//   const zip = new JSZip()
 
-  // TODO: include "watermark produced by URL"
-  zip.file('hello.txt', 'ding!\n')
-  // TODO: handle jpeg
+//   // TODO: include "watermark produced by URL"
+//   zip.file('hello.txt', 'ding!\n')
+//   // TODO: handle jpeg
 
-  // process each image through the canvas sequentially
-  // parallel won't work without multiple canvases
-  for (let i = 0; i < images.value.length; i++) {
-    const imageFile = images.value[i]
-    const dataUrl = await draw(imageFile.image)
-    zip.file(imageFile.file.name, stripDataUrl(dataUrl), { base64: true })
-  }
+//   // process each image through the canvas sequentially
+//   // parallel won't work without multiple canvases
+//   for (let i = 0; i < images.value.length; i++) {
+//     const imageFile = images.value[i]
+//     const dataUrl = await draw(imageFile.image)
+//     zip.file(imageFile.file.name, stripDataUrl(dataUrl), { base64: true })
+//   }
 
-  const content = await zip.generateAsync({ type: 'blob' })
-  saveAs(content, 'download.zip')
-}
+//   const content = await zip.generateAsync({ type: 'blob' })
+//   saveAs(content, 'download.zip')
+// }
 </script>
 
 <template>
@@ -206,7 +192,7 @@ const downloadAll = async () => {
         </div>
 
         <div>
-          <button class="text-white" @click="downloadAll">Download All</button>
+          <!-- <button class="text-white" @click="downloadAll">Download All</button> -->
         </div>
       </section>
 
@@ -226,10 +212,7 @@ const downloadAll = async () => {
     </div>
 
     <div class="col-span-2 flex flex-col p-5 justify-center overflow-auto">
-      <!-- <img :src="previewImage" class="max-w-full max-h-full mx-auto" /> -->
-      <canvas ref="compositeCanvas" class="max-w-full max-h-full mx-auto"></canvas>
+      <canvas ref="canvas" class="max-w-full max-h-full mx-auto"></canvas>
     </div>
   </div>
-
-  <canvas ref="watermarkCanvas" class="hidden"></canvas>
 </template>
