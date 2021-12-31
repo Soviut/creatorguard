@@ -23,12 +23,12 @@ const currentImage = computed(() => images.value[imageIndex.value])
 
 let app: Application | null = null
 
-const loader = new Loader()
-
 const preview = new Sprite()
 
 const container = new Container()
 container.alpha = 0.5
+container.pivot.set(0, 250)
+container.rotation = 0.5
 
 const text = new Text('This is a test', {
   fill: 0xffffff,
@@ -50,7 +50,7 @@ onMounted(() => {
   for (let y = 0; y < 5; y++) {
     for (let x = 0; x < 5; x++) {
       const sprite = Sprite.from(text.texture)
-      sprite.position.set(x * 200, y * 200)
+      sprite.position.set(x * 300, y * 300)
       container.addChild(sprite)
     }
   }
@@ -117,15 +117,18 @@ const fileChange = async (e: Event) => {
     }))
     imageIndex.value = 0
 
-    preview.texture = Texture.from(currentImage.value.image)
+    app?.renderer.resize(currentImage.value.image.width, currentImage.value.image.height)
 
-    // await draw(images.value[imageIndex.value].image)
+    preview.texture = Texture.from(currentImage.value.image)
   }
 }
 
 watch(
   () => currentImage.value,
-  (value) => preview.texture = Texture.from(value.image)
+  (value) => {
+    app?.renderer.resize(value.image.width, value.image.height)
+    preview.texture = Texture.from(value.image)
+  }
 )
 
 const selectImage = (i: number) => {
