@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { Application, Sprite, TilingSprite, Texture, Text, Container, BaseRenderTexture, RenderTexture } from 'pixi.js'
+import { Application, Sprite, TilingSprite, Texture, Text, Container, BaseRenderTexture, RenderTexture, Transform } from 'pixi.js'
 
 interface ImageFile {
   image: HTMLImageElement
@@ -39,6 +39,9 @@ const text = new Text(message.value, {
 // text.position.set(-5000, -5000)
 textContainer.addChild(text)
 
+const brt = new BaseRenderTexture({ width: 256, height: 128 })
+const rt = new RenderTexture(brt)
+
 onMounted(() => {
   app = new Application({
     view: canvas.value!,
@@ -49,12 +52,15 @@ onMounted(() => {
   app.stage.addChild(textContainer)
   app.stage.addChild(container)
 
-  const brt = new BaseRenderTexture({ width: 256, height: 128 })
-  const rt = new RenderTexture(brt)
-
   app.renderer.render(textContainer, { renderTexture: rt })
 
-  const tiling = new TilingSprite(rt, app.renderer.width, app.renderer.height)
+  const transform = new Transform()
+  transform.pivot.set(app.renderer.width, app.renderer.height)
+  transform.position.set(app.renderer.width, app.renderer.height)
+  transform.rotation = 45 * 0.0174533 // degrees to radians
+
+  const tiling = new TilingSprite(rt, app.renderer.width * 2, app.renderer.height * 2)
+  tiling.transform = transform
   container.addChild(tiling)
 })
 
