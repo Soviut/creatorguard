@@ -49,7 +49,7 @@ onMounted(() => {
   app.stage.addChild(textContainer)
   app.stage.addChild(container)
 
-  const brt = new BaseRenderTexture({ width: 256, height: 256 })
+  const brt = new BaseRenderTexture({ width: 256, height: 128 })
   const rt = new RenderTexture(brt)
 
   app.renderer.render(textContainer, { renderTexture: rt })
