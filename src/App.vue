@@ -30,7 +30,7 @@ container.alpha = 0.5
 container.pivot.set(0, 250)
 container.rotation = 0.5
 
-const text = new Text('This is a test', {
+const text = new Text(message.value, {
   fill: 0xffffff,
   strokeThickness: 8,
 })
@@ -40,7 +40,7 @@ text.position.set(-5000, -5000)
 onMounted(() => {
   app = new Application({
     view: canvas.value!,
-    backgroundAlpha: 0
+    backgroundAlpha: 0,
   })
 
   app.stage.addChild(preview)
