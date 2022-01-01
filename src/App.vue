@@ -60,7 +60,7 @@ onMounted(() => {
   transform.rotation = 45 * 0.0174533 // degrees to radians
 
   const tiling = new TilingSprite(rt, app.renderer.width * 2, app.renderer.height * 2)
-  tiling.transform = transform
+  tiling.tileTransform = transform
   container.addChild(tiling)
 })
 
