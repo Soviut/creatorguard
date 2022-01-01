@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { Application, BitmapText, Loader, Sprite, Texture, Text, Container } from 'pixi.js'
+import { Application, Sprite, TilingSprite, Texture, Text, Container, BaseRenderTexture, RenderTexture } from 'pixi.js'
 
 interface ImageFile {
   image: HTMLImageElement
@@ -26,17 +26,18 @@ const preview = new Sprite()
 
 const container = new Container()
 container.alpha = opacity.value
-container.pivot.set(0, 250)
-container.rotation = 0.5
+// container.pivot.set(0, 250)
+// container.rotation = 0.5
+
+const textContainer = new Container()
 
 const text = new Text(message.value, {
   fill: 0xffffff,
   strokeThickness: 8,
 })
-// move off screen, we can't hide it without related sprites also hiding
-text.position.set(-5000, -5000)
-
-const textSprites: Sprite[] = []
+// // move off screen, we can't hide it without related sprites also hiding
+// text.position.set(-5000, -5000)
+textContainer.addChild(text)
 
 onMounted(() => {
   app = new Application({
@@ -45,16 +46,16 @@ onMounted(() => {
   })
 
   app.stage.addChild(preview)
-  app.stage.addChild(text)
+  app.stage.addChild(textContainer)
   app.stage.addChild(container)
 
-  for (let y = 0; y < 5; y++) {
-    for (let x = 0; x < 5; x++) {
-      const sprite = Sprite.from(text.texture)
-      sprite.position.set(x * 300, y * 300)
-      container.addChild(sprite)
-    }
-  }
+  const brt = new BaseRenderTexture({ width: 256, height: 256 })
+  const rt = new RenderTexture(brt)
+
+  app.renderer.render(textContainer, { renderTexture: rt })
+
+  const tiling = new TilingSprite(rt, app.renderer.width, app.renderer.height)
+  container.addChild(tiling)
 })
 
 watch(
