@@ -11,8 +11,7 @@ interface ImageFile {
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 
-const xStep = ref(500)
-const yStep = ref(250)
+const spacing = ref(500)
 const opacity = ref(0.3)
 const message = ref('example.com')
 
@@ -26,7 +25,7 @@ let app: Application | null = null
 const preview = new Sprite()
 
 const container = new Container()
-container.alpha = 0.5
+container.alpha = opacity.value
 container.pivot.set(0, 250)
 container.rotation = 0.5
 
@@ -36,6 +35,8 @@ const text = new Text(message.value, {
 })
 // move off screen, we can't hide it without related sprites also hiding
 text.position.set(-5000, -5000)
+
+const textSprites: Sprite[] = []
 
 onMounted(() => {
   app = new Application({
@@ -170,13 +171,13 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
       <section v-if="images.length" class="mb-8 space-y-3">
         <div>
           <label class="text-white">Horizontal Spacing</label>
-          <input type="range" min="100" max="1000" step="50" v-model="xStep" />
+          <input type="range" min="100" max="1000" step="50" v-model="spacing" />
         </div>
 
-        <div>
+        <!-- <div>
           <label class="text-white">Vertical Spacing</label>
-          <input type="range" min="50" max="500" step="10" v-model="yStep" />
-        </div>
+          <input type="range" min="50" max="500" step="10" v-model="ySpace" />
+        </div> -->
 
         <div>
           <label class="text-white">Opacity</label>
