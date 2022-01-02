@@ -21,8 +21,10 @@ interface ImageFile {
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 
-const spacing = ref({ width: 512, height: 256 })
-const opacity = ref(0.3)
+const spacing = ref({ width: 384, height: 192 })
+const offsetX = ref(0)
+const offsetY = ref(0)
+const opacity = ref(0.2)
 const message = ref('example.com')
 
 const images = ref<ImageFile[]>([])
@@ -42,10 +44,14 @@ const text = new Text(message.value, {
 })
 textContainer.addChild(text)
 
-let brt = new BaseRenderTexture({ width: 512, height: 256 })
+let brt = new BaseRenderTexture({
+  width: spacing.value.width,
+  height: spacing.value.height,
+})
 let rt = new RenderTexture(brt)
 
 const tileTransform = new Transform()
+tileTransform.position.set(offsetX.value, offsetY.value)
 tileTransform.rotation = 45 * 0.0174533 // degrees to radians
 
 const watermark = new TilingSprite(rt, 256, 256)
@@ -63,6 +69,7 @@ onMounted(() => {
 
   app.renderer.render(textContainer, { renderTexture: rt })
 
+  // hide text when not being rendered
   text.visible = false
 })
 
@@ -74,6 +81,11 @@ watch(
     app?.renderer.render(textContainer, { renderTexture: rt })
     text.visible = false
   }
+)
+
+watch(
+  [offsetX, offsetY],
+  ([x, y]) => tileTransform.position.set(x, y)
 )
 
 watch(
@@ -227,10 +239,15 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
           />
         </div>
 
-        <!-- <div>
-          <label class="text-white">Vertical Spacing</label>
-          <input type="range" min="50" max="500" step="10" v-model="ySpace" />
-        </div> -->
+        <div>
+          <label class="text-white">Horizontal Offset</label>
+          <input type="range" min="-200" max="200" v-model="offsetX" />
+        </div>
+
+        <div>
+          <label class="text-white">Vertical Offset</label>
+          <input type="range" min="-200" max="200" v-model="offsetY" />
+        </div>
 
         <div>
           <label class="text-white">Opacity</label>
