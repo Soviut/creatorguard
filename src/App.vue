@@ -53,16 +53,16 @@ onMounted(() => {
 
   app.renderer.render(textContainer, { renderTexture: rt })
 
-  // text.visible = false
+  text.visible = false
 })
 
 watch(
   () => message.value,
   (value) => {
-    // text.visible = true
+    text.visible = true
     text.text = value
     app?.renderer.render(textContainer, { renderTexture: rt })
-    // text.visible = false
+    text.visible = false
   }
 )
 
@@ -80,9 +80,9 @@ watch(
     rt.destroy()
     brt = new BaseRenderTexture({ width: value.width, height: value.height })
     rt = new RenderTexture(brt)
-    // text.visible = true
+    text.visible = true
     app?.renderer.render(textContainer, { renderTexture: rt })
-    // text.visible = false
+    text.visible = false
     watermark.texture = rt
   }
 )
@@ -194,10 +194,9 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
       <section v-if="images.length" class="mb-8 space-y-3">
         <div>
           <label class="text-white">Spacing</label>
-          <input type="radio" name="spacing" :value="{ width: 256, height: 64 }" v-model="spacing" />
           <input type="radio" name="spacing" :value="{ width: 256, height: 128 }" v-model="spacing" />
+          <input type="radio" name="spacing" :value="{ width: 384, height: 192 }" v-model="spacing" />
           <input type="radio" name="spacing" :value="{ width: 512, height: 256 }" v-model="spacing" />
-          <input type="radio" name="spacing" :value="{ width: 512, height: 512 }" v-model="spacing" />
         </div>
 
         <!-- <div>
