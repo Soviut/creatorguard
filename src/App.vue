@@ -11,7 +11,7 @@ interface ImageFile {
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 
-const spacing = ref(500)
+const spacing = ref({ width: 512, height: 256 })
 const opacity = ref(0.3)
 const message = ref('example.com')
 
@@ -32,8 +32,8 @@ const text = new Text(message.value, {
 })
 textContainer.addChild(text)
 
-const brt = new BaseRenderTexture({ width: 256, height: 128 })
-const rt = new RenderTexture(brt)
+let brt = new BaseRenderTexture({ width: 512, height: 256 })
+let rt = new RenderTexture(brt)
 
 const tileTransform = new Transform()
 tileTransform.rotation = 45 * 0.0174533 // degrees to radians
@@ -53,16 +53,16 @@ onMounted(() => {
 
   app.renderer.render(textContainer, { renderTexture: rt })
 
-  text.visible = false
+  // text.visible = false
 })
 
 watch(
   () => message.value,
   (value) => {
-    text.visible = true
+    // text.visible = true
     text.text = value
     app?.renderer.render(textContainer, { renderTexture: rt })
-    text.visible = false
+    // text.visible = false
   }
 )
 
@@ -70,6 +70,21 @@ watch(
   () => opacity.value,
   (value) => watermark.alpha = value,
   { immediate: true },
+)
+
+watch(
+  () => spacing.value,
+  (value) => {
+    console.log(value)
+    brt.destroy()
+    rt.destroy()
+    brt = new BaseRenderTexture({ width: value.width, height: value.height })
+    rt = new RenderTexture(brt)
+    // text.visible = true
+    app?.renderer.render(textContainer, { renderTexture: rt })
+    // text.visible = false
+    watermark.texture = rt
+  }
 )
 
 const fileToDataURL = async (file: File): Promise<string> => {
@@ -178,8 +193,11 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
 
       <section v-if="images.length" class="mb-8 space-y-3">
         <div>
-          <label class="text-white">Horizontal Spacing</label>
-          <input type="range" min="100" max="1000" step="50" v-model="spacing" />
+          <label class="text-white">Spacing</label>
+          <input type="radio" name="spacing" :value="{ width: 256, height: 64 }" v-model="spacing" />
+          <input type="radio" name="spacing" :value="{ width: 256, height: 128 }" v-model="spacing" />
+          <input type="radio" name="spacing" :value="{ width: 512, height: 256 }" v-model="spacing" />
+          <input type="radio" name="spacing" :value="{ width: 512, height: 512 }" v-model="spacing" />
         </div>
 
         <!-- <div>
