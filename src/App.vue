@@ -2,7 +2,17 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { Application, Sprite, TilingSprite, Texture, Text, Container, BaseRenderTexture, RenderTexture, Transform } from 'pixi.js'
+import {
+  Application,
+  Sprite,
+  TilingSprite,
+  Texture,
+  Text,
+  Container,
+  BaseRenderTexture,
+  RenderTexture,
+  Transform,
+} from 'pixi.js'
 
 interface ImageFile {
   image: HTMLImageElement
@@ -68,8 +78,8 @@ watch(
 
 watch(
   () => opacity.value,
-  (value) => watermark.alpha = value,
-  { immediate: true },
+  (value) => (watermark.alpha = value),
+  { immediate: true }
 )
 
 watch(
@@ -149,7 +159,10 @@ watch(
 )
 
 const updatePreview = () => {
-  app?.renderer.resize(currentImage.value.image.width, currentImage.value.image.height)
+  app?.renderer.resize(
+    currentImage.value.image.width,
+    currentImage.value.image.height
+  )
   watermark.width = currentImage.value.image.width
   watermark.height = currentImage.value.image.height
   preview.texture = Texture.from(currentImage.value.image)
@@ -194,9 +207,24 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
       <section v-if="images.length" class="mb-8 space-y-3">
         <div>
           <label class="text-white">Spacing</label>
-          <input type="radio" name="spacing" :value="{ width: 256, height: 128 }" v-model="spacing" />
-          <input type="radio" name="spacing" :value="{ width: 384, height: 192 }" v-model="spacing" />
-          <input type="radio" name="spacing" :value="{ width: 512, height: 256 }" v-model="spacing" />
+          <input
+            type="radio"
+            name="spacing"
+            :value="{ width: 256, height: 128 }"
+            v-model="spacing"
+          />
+          <input
+            type="radio"
+            name="spacing"
+            :value="{ width: 384, height: 192 }"
+            v-model="spacing"
+          />
+          <input
+            type="radio"
+            name="spacing"
+            :value="{ width: 512, height: 256 }"
+            v-model="spacing"
+          />
         </div>
 
         <!-- <div>
