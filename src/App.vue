@@ -38,7 +38,7 @@ const rt = new RenderTexture(brt)
 const tileTransform = new Transform()
 tileTransform.rotation = 45 * 0.0174533 // degrees to radians
 
-const watermark = new TilingSprite(rt, 1024, 1024)
+const watermark = new TilingSprite(rt, 256, 256)
 watermark.tileTransform = tileTransform
 
 onMounted(() => {
@@ -124,19 +124,21 @@ const fileChange = async (e: Event) => {
     }))
     imageIndex.value = 0
 
-    app?.renderer.resize(currentImage.value.image.width, currentImage.value.image.height)
-
-    preview.texture = Texture.from(currentImage.value.image)
+    updatePreview()
   }
 }
 
 watch(
   () => currentImage.value,
-  (value) => {
-    app?.renderer.resize(value.image.width, value.image.height)
-    preview.texture = Texture.from(value.image)
-  }
+  () => updatePreview()
 )
+
+const updatePreview = () => {
+  app?.renderer.resize(currentImage.value.image.width, currentImage.value.image.height)
+  watermark.width = currentImage.value.image.width
+  watermark.height = currentImage.value.image.height
+  preview.texture = Texture.from(currentImage.value.image)
+}
 
 const selectImage = (i: number) => {
   imageIndex.value = i
