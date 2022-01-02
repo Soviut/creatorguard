@@ -24,23 +24,22 @@ let app: Application | null = null
 
 const preview = new Sprite()
 
-const container = new Container()
-container.alpha = opacity.value
-// container.pivot.set(0, 250)
-// container.rotation = 0.5
-
 const textContainer = new Container()
 
 const text = new Text(message.value, {
   fill: 0xffffff,
   strokeThickness: 8,
 })
-// // move off screen, we can't hide it without related sprites also hiding
-// text.position.set(-5000, -5000)
 textContainer.addChild(text)
 
 const brt = new BaseRenderTexture({ width: 256, height: 128 })
 const rt = new RenderTexture(brt)
+
+const tileTransform = new Transform()
+tileTransform.rotation = 45 * 0.0174533 // degrees to radians
+
+const watermark = new TilingSprite(rt, 1024, 1024)
+watermark.tileTransform = tileTransform
 
 onMounted(() => {
   app = new Application({
@@ -50,28 +49,27 @@ onMounted(() => {
 
   app.stage.addChild(preview)
   app.stage.addChild(textContainer)
-  app.stage.addChild(container)
+  app.stage.addChild(watermark)
 
   app.renderer.render(textContainer, { renderTexture: rt })
 
-  const transform = new Transform()
-  transform.pivot.set(app.renderer.width, app.renderer.height)
-  transform.position.set(app.renderer.width, app.renderer.height)
-  transform.rotation = 45 * 0.0174533 // degrees to radians
-
-  const tiling = new TilingSprite(rt, app.renderer.width * 2, app.renderer.height * 2)
-  tiling.tileTransform = transform
-  container.addChild(tiling)
+  text.visible = false
 })
 
 watch(
   () => message.value,
-  (value) => text.text = value
+  (value) => {
+    text.visible = true
+    text.text = value
+    app?.renderer.render(textContainer, { renderTexture: rt })
+    text.visible = false
+  }
 )
 
 watch(
   () => opacity.value,
-  (value) => container.alpha = value
+  (value) => watermark.alpha = value,
+  { immediate: true },
 )
 
 const fileToDataURL = async (file: File): Promise<string> => {
@@ -108,6 +106,7 @@ async function dataURLtoImage(url: string): Promise<HTMLImageElement> {
     image.src = url
   })
 }
+
 const fileToImage = async (file: File): Promise<HTMLImageElement> => {
   const dataUrl = await fileToDataURL(file)
   return dataURLtoImage(dataUrl)
