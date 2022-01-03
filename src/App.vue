@@ -41,7 +41,7 @@ const textContainer = new Container()
 const text = new Text(message.value, {
   fill: 0xffffff,
   strokeThickness: 8,
-  miterLimit: 3
+  miterLimit: 3,
 })
 textContainer.addChild(text)
 
@@ -84,10 +84,7 @@ watch(
   }
 )
 
-watch(
-  [offsetX, offsetY],
-  ([x, y]) => tileTransform.position.set(x, y)
-)
+watch([offsetX, offsetY], ([x, y]) => tileTransform.position.set(x, y))
 
 watch(
   () => opacity.value,
@@ -187,24 +184,24 @@ const selectImage = (i: number) => {
 
 const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
 
-// const downloadAll = async () => {
-//   const zip = new JSZip()
+const downloadAll = async () => {
+  const zip = new JSZip()
 
-//   // TODO: include "watermark produced by URL"
-//   zip.file('hello.txt', 'ding!\n')
-//   // TODO: handle jpeg
+  // TODO: include "watermark produced by URL"
+  zip.file('hello.txt', 'ding!\n')
+  // TODO: handle jpeg
 
-//   // process each image through the canvas sequentially
-//   // parallel won't work without multiple canvases
-//   for (let i = 0; i < images.value.length; i++) {
-//     const imageFile = images.value[i]
-//     const dataUrl = await draw(imageFile.image)
-//     zip.file(imageFile.file.name, stripDataUrl(dataUrl), { base64: true })
-//   }
+  // process each image through the canvas sequentially
+  // parallel won't work without multiple canvases
+  // for (let i = 0; i < images.value.length; i++) {
+  //   const imageFile = images.value[i]
+  //   const dataUrl = await draw(imageFile.image)
+  //   zip.file(imageFile.file.name, stripDataUrl(dataUrl), { base64: true })
+  // }
 
-//   const content = await zip.generateAsync({ type: 'blob' })
-//   saveAs(content, 'download.zip')
-// }
+  const content = await zip.generateAsync({ type: 'blob' })
+  saveAs(content, 'download.zip')
+}
 </script>
 
 <template>
@@ -219,18 +216,18 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
 
       <section v-if="images.length" class="mb-8 space-y-3">
         <fieldset>
-          <legend class="text-white">Testing</legend>
+          <legend class="text-white">Warmark Density</legend>
 
           <div class="grid grid-cols-3">
             <div>
               <input
-                id="high"
+                id="low"
                 type="radio"
                 name="spacing"
-                :value="{ width: 256, height: 128 }"
+                :value="{ width: 512, height: 256 }"
                 v-model="spacing"
               />
-              <label for="high" class="text-white ml-2">High</label>
+              <label for="low" class="text-white ml-2">Low</label>
             </div>
 
             <div>
@@ -246,13 +243,13 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
 
             <div>
               <input
-                id="low"
+                id="high"
                 type="radio"
                 name="spacing"
-                :value="{ width: 512, height: 256 }"
+                :value="{ width: 256, height: 128 }"
                 v-model="spacing"
               />
-              <label for="low" class="text-white ml-2">Low</label>
+              <label for="high" class="text-white ml-2">High</label>
             </div>
           </div>
         </fieldset>
@@ -282,10 +279,6 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
           <label class="text-white">Message</label>
           <input type="text" v-model="message" />
         </div>
-
-        <div>
-          <!-- <button class="text-white" @click="downloadAll">Download All</button> -->
-        </div>
       </section>
 
       <section>
@@ -300,6 +293,15 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
             </button>
           </li>
         </ul>
+      </section>
+
+      <section class="sticky bottom-0">
+        <button
+          class="block w-full px-5 py-3 rounded-md bg-primary-500 text-white"
+          @click="downloadAll"
+        >
+          Download All
+        </button>
       </section>
     </div>
 
