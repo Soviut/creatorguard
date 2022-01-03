@@ -212,8 +212,8 @@ const setTab = (tab: 'images' | 'watermark') => {
 
 <template>
   <div class="grid grid-cols-3 h-screen">
-    <div class="p-5 bg-gray-900 overflow-auto">
-      <nav class="sticky top-0 mb-8 grid grid-cols-2 text-gray-400 border-b border-gray-500">
+    <div class="flex flex-col bg-gray-900 overflow-auto">
+      <nav class="sticky px-5 top-0 grid grid-cols-2 text-gray-400 border-b border-gray-700 bg-gray-900">
         <button
           @click="setTab('images')"
           class="p-3 border-b-4"
@@ -238,25 +238,27 @@ const setTab = (tab: 'images' | 'watermark') => {
         </button>
       </nav>
 
-      <section v-if="currentTab === 'images'">
+      <section v-show="currentTab === 'images'" class="flex-grow flex flex-col">
         <div v-if="images.length === 0">
           <label class="text-white">File</label>
           <input type="file" accept="image/*" multiple @change="fileChange" />
         </div>
 
-        <ul class="mb-8 grid grid-cols-3 gap-5">
-          <li v-for="(imageFile, i) in images" :key="i">
-            <button
-              @click="selectImage(i)"
-              class="w-full h-full p-3 rounded items-center border aspect-square"
-              :class="i === imageIndex ? 'border-teal-500' : 'border-gray-700'"
-            >
-              <img :src="imageFile.image.src" class="max-w-full" />
-            </button>
-          </li>
-        </ul>
+        <div class="flex-grow p-5">
+          <ul class="grid grid-cols-3 gap-5">
+            <li v-for="(imageFile, i) in images" :key="i">
+              <button
+                @click="selectImage(i)"
+                class="w-full h-full p-3 rounded items-center border aspect-square"
+                :class="i === imageIndex ? 'border-teal-500' : 'border-gray-700'"
+              >
+                <img :src="imageFile.image.src" class="max-w-full" />
+              </button>
+            </li>
+          </ul>
+        </div>
 
-        <div class="sticky bottom-0">
+        <div class="sticky bottom-0 p-5 bg-gray-900">
           <button
             v-if="images.length > 0"
             class="block w-full px-5 py-3 rounded-md bg-primary-500 text-white"
@@ -267,71 +269,73 @@ const setTab = (tab: 'images' | 'watermark') => {
         </div>
       </section>
 
-      <section v-if="currentTab === 'watermark'" class="space-y-3">
-        <div>
-          <label class="text-white">Message</label>
-          <input type="text" v-model="message" />
-        </div>
-
-        <fieldset>
-          <legend class="text-white">Warmark Density</legend>
-
-          <div class="grid grid-cols-3">
-            <div>
-              <input
-                id="low"
-                type="radio"
-                name="spacing"
-                :value="{ width: 512, height: 256 }"
-                v-model="spacing"
-              />
-              <label for="low" class="text-white ml-2">Low</label>
-            </div>
-
-            <div>
-              <input
-                id="medium"
-                type="radio"
-                name="spacing"
-                :value="{ width: 384, height: 192 }"
-                v-model="spacing"
-              />
-              <label for="medium" class="text-white ml-2">Medium</label>
-            </div>
-
-            <div>
-              <input
-                id="high"
-                type="radio"
-                name="spacing"
-                :value="{ width: 256, height: 128 }"
-                v-model="spacing"
-              />
-              <label for="high" class="text-white ml-2">High</label>
-            </div>
+      <section v-show="currentTab === 'watermark'" class="p-5">
+        <form @submit.prevent class="space-y-3">
+          <div>
+            <label class="text-white">Message</label>
+            <input type="text" v-model="message" />
           </div>
-        </fieldset>
 
-        <div>
-          <label class="text-white">Horizontal Offset</label>
-          <input type="range" min="-200" max="200" v-model="offsetX" />
-        </div>
+          <fieldset>
+            <legend class="text-white">Warmark Density</legend>
 
-        <div>
-          <label class="text-white">Vertical Offset</label>
-          <input type="range" min="-200" max="200" v-model="offsetY" />
-        </div>
+            <div class="grid grid-cols-3">
+              <div>
+                <input
+                  id="low"
+                  type="radio"
+                  name="spacing"
+                  :value="{ width: 512, height: 256 }"
+                  v-model="spacing"
+                />
+                <label for="low" class="text-white ml-2">Low</label>
+              </div>
 
-        <div>
-          <label class="text-white">Opacity</label>
-          <input
-            type="range"
-            min="0.1"
-            max="1.0"
-            step="0.1"
-            v-model="opacity"
-          />
-        </div>
+              <div>
+                <input
+                  id="medium"
+                  type="radio"
+                  name="spacing"
+                  :value="{ width: 384, height: 192 }"
+                  v-model="spacing"
+                />
+                <label for="medium" class="text-white ml-2">Medium</label>
+              </div>
+
+              <div>
+                <input
+                  id="high"
+                  type="radio"
+                  name="spacing"
+                  :value="{ width: 256, height: 128 }"
+                  v-model="spacing"
+                />
+                <label for="high" class="text-white ml-2">High</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <div>
+            <label class="text-white">Horizontal Offset</label>
+            <input type="range" min="-200" max="200" v-model="offsetX" />
+          </div>
+
+          <div>
+            <label class="text-white">Vertical Offset</label>
+            <input type="range" min="-200" max="200" v-model="offsetY" />
+          </div>
+
+          <div>
+            <label class="text-white">Opacity</label>
+            <input
+              type="range"
+              min="0.1"
+              max="1.0"
+              step="0.1"
+              v-model="opacity"
+            />
+          </div>
+        </form>
       </section>
     </div>
 
