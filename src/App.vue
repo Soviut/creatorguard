@@ -348,7 +348,7 @@ const setTab = (tab: 'images' | 'watermark') => {
     <div
       class="relative col-span-2 flex flex-col p-5 justify-center overflow-auto"
     >
-      <canvas ref="canvas" class="max-w-full max-h-full mx-auto"></canvas>
+      <canvas v-show="images.length > 0" ref="canvas" class="max-w-full max-h-full mx-auto"></canvas>
       <button
         class="absolute bottom-8 right-8 px-5 py-3 rounded-md bg-gray-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-opacity"
       >
