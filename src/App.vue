@@ -202,19 +202,75 @@ const downloadAll = async () => {
   const content = await zip.generateAsync({ type: 'blob' })
   saveAs(content, 'download.zip')
 }
+
+const currentTab = ref<'images' | 'watermark'>('images')
+
+const setTab = (tab: 'images' | 'watermark') => {
+  currentTab.value = tab
+}
 </script>
 
 <template>
   <div class="grid grid-cols-3 h-screen">
     <div class="p-5 bg-gray-900 overflow-auto">
-      <section v-if="images.length === 0">
-        <div>
+      <nav class="mb-8 grid grid-cols-2 text-gray-400 border-b border-gray-500">
+        <button
+          @click="setTab('images')"
+          class="p-3 border-b-4"
+          :class="
+            currentTab === 'images'
+              ? 'border-primary-500 text-white'
+              : 'border-transparent'
+          "
+        >
+          Images
+        </button>
+        <button
+          @click="setTab('watermark')"
+          class="p-3 border-b-4"
+          :class="
+            currentTab === 'watermark'
+              ? 'border-primary-500 text-white'
+              : 'border-transparent'
+          "
+        >
+          Watermark
+        </button>
+      </nav>
+
+      <section v-if="currentTab === 'images'">
+        <div v-if="images.length === 0">
           <label class="text-white">File</label>
           <input type="file" accept="image/*" multiple @change="fileChange" />
         </div>
+
+        <ul class="mb-8 grid grid-cols-3 gap-5">
+          <li v-for="(imageFile, i) in images" :key="i">
+            <button
+              @click="selectImage(i)"
+              class="w-full h-full p-3 rounded items-center border aspect-square"
+              :class="i === imageIndex ? 'border-teal-500' : 'border-gray-700'"
+            >
+              <img :src="imageFile.image.src" class="max-w-full" />
+            </button>
+          </li>
+        </ul>
+
+        <button
+          v-if="images.length > 0"
+          class="block w-full px-5 py-3 rounded-md bg-primary-500 text-white"
+          @click="downloadAll"
+        >
+          Download All
+        </button>
       </section>
 
-      <section v-if="images.length" class="mb-8 space-y-3">
+      <section v-if="currentTab === 'watermark'" class="space-y-3">
+        <div>
+          <label class="text-white">Message</label>
+          <input type="text" v-model="message" />
+        </div>
+
         <fieldset>
           <legend class="text-white">Warmark Density</legend>
 
@@ -274,34 +330,6 @@ const downloadAll = async () => {
             v-model="opacity"
           />
         </div>
-
-        <div>
-          <label class="text-white">Message</label>
-          <input type="text" v-model="message" />
-        </div>
-      </section>
-
-      <section>
-        <ul class="grid grid-cols-3 gap-5">
-          <li v-for="(imageFile, i) in images" :key="i">
-            <button
-              @click="selectImage(i)"
-              class="w-full h-full p-3 rounded items-center border aspect-square"
-              :class="i === imageIndex ? 'border-teal-500' : 'border-gray-700'"
-            >
-              <img :src="imageFile.image.src" class="max-w-full" />
-            </button>
-          </li>
-        </ul>
-      </section>
-
-      <section class="sticky bottom-0">
-        <button
-          class="block w-full px-5 py-3 rounded-md bg-primary-500 text-white"
-          @click="downloadAll"
-        >
-          Download All
-        </button>
       </section>
     </div>
 
