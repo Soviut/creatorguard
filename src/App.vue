@@ -213,7 +213,7 @@ const setTab = (tab: 'images' | 'watermark') => {
 <template>
   <div class="grid grid-cols-3 h-screen">
     <div class="p-5 bg-gray-900 overflow-auto">
-      <nav class="mb-8 grid grid-cols-2 text-gray-400 border-b border-gray-500">
+      <nav class="sticky top-0 mb-8 grid grid-cols-2 text-gray-400 border-b border-gray-500">
         <button
           @click="setTab('images')"
           class="p-3 border-b-4"
@@ -256,13 +256,15 @@ const setTab = (tab: 'images' | 'watermark') => {
           </li>
         </ul>
 
-        <button
-          v-if="images.length > 0"
-          class="block w-full px-5 py-3 rounded-md bg-primary-500 text-white"
-          @click="downloadAll"
-        >
-          Download All
-        </button>
+        <div class="sticky bottom-0">
+          <button
+            v-if="images.length > 0"
+            class="block w-full px-5 py-3 rounded-md bg-primary-500 text-white"
+            @click="downloadAll"
+          >
+            Download All
+          </button>
+        </div>
       </section>
 
       <section v-if="currentTab === 'watermark'" class="space-y-3">
