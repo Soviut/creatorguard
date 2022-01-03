@@ -213,7 +213,9 @@ const setTab = (tab: 'images' | 'watermark') => {
 <template>
   <div class="grid grid-cols-3 h-screen">
     <div class="flex flex-col bg-gray-900 overflow-auto">
-      <nav class="sticky px-5 top-0 grid grid-cols-2 text-gray-400 border-b border-gray-700 bg-gray-900">
+      <nav
+        class="sticky px-5 top-0 grid grid-cols-2 text-gray-400 border-b border-gray-700 bg-gray-900"
+      >
         <button
           @click="setTab('images')"
           class="p-3 border-b-4"
@@ -250,7 +252,9 @@ const setTab = (tab: 'images' | 'watermark') => {
               <button
                 @click="selectImage(i)"
                 class="w-full h-full p-3 rounded items-center border aspect-square"
-                :class="i === imageIndex ? 'border-teal-500' : 'border-gray-700'"
+                :class="
+                  i === imageIndex ? 'border-teal-500' : 'border-gray-700'
+                "
               >
                 <img :src="imageFile.image.src" class="max-w-full" />
               </button>
@@ -339,8 +343,15 @@ const setTab = (tab: 'images' | 'watermark') => {
       </section>
     </div>
 
-    <div class="col-span-2 flex flex-col p-5 justify-center overflow-auto">
+    <div
+      class="relative col-span-2 flex flex-col p-5 justify-center overflow-auto"
+    >
       <canvas ref="canvas" class="max-w-full max-h-full mx-auto"></canvas>
+      <button
+        class="absolute bottom-8 right-8 px-5 py-3 rounded-md bg-gray-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-opacity"
+      >
+        Download
+      </button>
     </div>
   </div>
 </template>
