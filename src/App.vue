@@ -41,6 +41,7 @@ const textContainer = new Container()
 const text = new Text(message.value, {
   fill: 0xffffff,
   strokeThickness: 8,
+  miterLimit: 3
 })
 textContainer.addChild(text)
 
@@ -217,27 +218,44 @@ const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
       </section>
 
       <section v-if="images.length" class="mb-8 space-y-3">
-        <div>
-          <label class="text-white">Spacing</label>
-          <input
-            type="radio"
-            name="spacing"
-            :value="{ width: 256, height: 128 }"
-            v-model="spacing"
-          />
-          <input
-            type="radio"
-            name="spacing"
-            :value="{ width: 384, height: 192 }"
-            v-model="spacing"
-          />
-          <input
-            type="radio"
-            name="spacing"
-            :value="{ width: 512, height: 256 }"
-            v-model="spacing"
-          />
-        </div>
+        <fieldset>
+          <legend class="text-white">Testing</legend>
+
+          <div class="grid grid-cols-3">
+            <div>
+              <input
+                id="high"
+                type="radio"
+                name="spacing"
+                :value="{ width: 256, height: 128 }"
+                v-model="spacing"
+              />
+              <label for="high" class="text-white ml-2">High</label>
+            </div>
+
+            <div>
+              <input
+                id="medium"
+                type="radio"
+                name="spacing"
+                :value="{ width: 384, height: 192 }"
+                v-model="spacing"
+              />
+              <label for="medium" class="text-white ml-2">Medium</label>
+            </div>
+
+            <div>
+              <input
+                id="low"
+                type="radio"
+                name="spacing"
+                :value="{ width: 512, height: 256 }"
+                v-model="spacing"
+              />
+              <label for="low" class="text-white ml-2">Low</label>
+            </div>
+          </div>
+        </fieldset>
 
         <div>
           <label class="text-white">Horizontal Offset</label>
