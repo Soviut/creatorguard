@@ -227,8 +227,8 @@ const setTab = (tab: 'images' | 'watermark') => {
 </script>
 
 <template>
-  <div class="grid grid-cols-3 h-screen">
-    <div class="flex flex-col bg-gray-900 overflow-auto">
+  <div class="flex h-screen">
+    <div class="w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto">
       <nav
         class="sticky px-5 top-0 grid grid-cols-2 text-gray-400 border-b border-gray-700 bg-gray-900"
       >
@@ -379,7 +379,7 @@ const setTab = (tab: 'images' | 'watermark') => {
     </div>
 
     <div
-      class="relative col-span-2 flex flex-col p-5 justify-center overflow-auto"
+      class="flex-grow relative flex flex-col p-5 justify-center overflow-auto"
     >
       <canvas
         v-show="images.length > 0"
