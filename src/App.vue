@@ -25,7 +25,7 @@ const spacing = ref({ width: 384, height: 192 })
 const offsetX = ref(0)
 const offsetY = ref(0)
 const opacity = ref(0.2)
-const message = ref('example.com')
+const message = ref('creatorguard.com')
 
 const images = ref<ImageFile[]>([])
 const imageIndex = ref(-1)
@@ -243,7 +243,11 @@ const setTab = (tab: 'images' | 'watermark') => {
         >
           Images
 
-          <span v-if="images.length" class="ml-2 px-2 py-1 rounded-full bg-primary-500 text-xs text-white">{{ images.length }}</span>
+          <span
+            v-if="images.length"
+            class="ml-2 px-2 py-1 rounded-full bg-primary-500 text-xs text-white"
+            >{{ images.length }}</span
+          >
         </button>
         <button
           @click="setTab('watermark')"
@@ -259,9 +263,22 @@ const setTab = (tab: 'images' | 'watermark') => {
       </nav>
 
       <section v-show="currentTab === 'images'" class="flex-grow flex flex-col">
-        <div v-if="images.length === 0">
-          <label class="text-white">File</label>
-          <input type="file" accept="image/*" multiple @change="fileChange" />
+        <div v-if="images.length === 0" class="p-5">
+          <label
+            for="image-files"
+            class="relative block px-5 py-24 border-2 border-dashed border-gray-600 rounded-lg text-white text-center text-lg cursor-pointer hover:bg-gray-800 transition"
+          >
+            Click or drop image files here
+
+            <input
+              id="image-files"
+              type="file"
+              accept="image/*"
+              multiple
+              class="absolute inset-0 opacity-0 cursor-pointer"
+              @change="fileChange"
+            />
+          </label>
         </div>
 
         <div class="flex-grow p-5">
@@ -364,8 +381,13 @@ const setTab = (tab: 'images' | 'watermark') => {
     <div
       class="relative col-span-2 flex flex-col p-5 justify-center overflow-auto"
     >
-      <canvas v-show="images.length > 0" ref="canvas" class="max-w-full max-h-full mx-auto"></canvas>
+      <canvas
+        v-show="images.length > 0"
+        ref="canvas"
+        class="max-w-full max-h-full mx-auto"
+      ></canvas>
       <button
+        v-if="images.length > 0"
         class="absolute bottom-8 right-8 px-5 py-3 rounded-md bg-gray-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-opacity"
         @click="download"
       >
