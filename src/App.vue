@@ -189,7 +189,6 @@ const downloadAll = async () => {
 
   // TODO: include "watermark produced by URL"
   zip.file('hello.txt', 'ding!\n')
-  // TODO: handle jpeg
 
   const originalIndex = imageIndex.value
 
@@ -197,9 +196,12 @@ const downloadAll = async () => {
   for (let i = 0; i < images.value.length; i++) {
     const imageFile = images.value[i]
     imageIndex.value = i
+    // wait for vue values to update
     await nextTick()
+    // force canvas to render then extract
     app?.renderer.render(app.stage)
-    const dataUrl = app?.renderer.view.toDataURL()!
+    // always use full image quality 1
+    const dataUrl = app?.renderer.view.toDataURL(imageFile.file.type, 1)!
     zip.file(imageFile.file.name, stripDataUrl(dataUrl), { base64: true })
   }
 
