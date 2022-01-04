@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import {
@@ -191,13 +191,20 @@ const downloadAll = async () => {
   zip.file('hello.txt', 'ding!\n')
   // TODO: handle jpeg
 
+  const originalIndex = imageIndex.value
+
   // process each image through the canvas sequentially
-  // parallel won't work without multiple canvases
-  // for (let i = 0; i < images.value.length; i++) {
-  //   const imageFile = images.value[i]
-  //   const dataUrl = await draw(imageFile.image)
-  //   zip.file(imageFile.file.name, stripDataUrl(dataUrl), { base64: true })
-  // }
+  for (let i = 0; i < images.value.length; i++) {
+    const imageFile = images.value[i]
+    imageIndex.value = i
+    await nextTick()
+    app?.renderer.render(app.stage)
+    const dataUrl = app?.renderer.view.toDataURL()!
+    zip.file(imageFile.file.name, stripDataUrl(dataUrl), { base64: true })
+  }
+
+  // reset index
+  imageIndex.value = originalIndex
 
   const content = await zip.generateAsync({ type: 'blob' })
   saveAs(content, 'download.zip')
