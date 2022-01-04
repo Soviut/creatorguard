@@ -188,7 +188,7 @@ const downloadAll = async () => {
   const zip = new JSZip()
 
   // TODO: include "watermark produced by URL"
-  zip.file('hello.txt', 'ding!\n')
+  zip.file('thanks.txt', 'Watermarked produced by https://creatorguard.com\n')
 
   const originalIndex = imageIndex.value
 
@@ -210,6 +210,13 @@ const downloadAll = async () => {
 
   const content = await zip.generateAsync({ type: 'blob' })
   saveAs(content, 'download.zip')
+}
+
+const download = () => {
+  app?.renderer.render(app.stage)
+  // always use full image quality 1
+  const dataUrl = app?.renderer.view.toDataURL(currentImage.value.file.type, 1)!
+  saveAs(dataUrl, currentImage.value.file.name)
 }
 
 const currentTab = ref<'images' | 'watermark'>('images')
@@ -360,6 +367,7 @@ const setTab = (tab: 'images' | 'watermark') => {
       <canvas v-show="images.length > 0" ref="canvas" class="max-w-full max-h-full mx-auto"></canvas>
       <button
         class="absolute bottom-8 right-8 px-5 py-3 rounded-md bg-gray-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-opacity"
+        @click="download"
       >
         Download
       </button>
