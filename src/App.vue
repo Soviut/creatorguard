@@ -227,8 +227,8 @@ const setTab = (tab: 'images' | 'watermark') => {
 </script>
 
 <template>
-  <div class="flex h-screen">
-    <div class="w-[300px] lg:w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto">
+  <div class="flex flex-col lg:flex-row h-screen">
+    <div class="w-full h-1/2 lg:h-auto lg:w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto">
       <header class="px-5 pt-5">
         <a href="/" class="flex items-center hover:no-underline">
           <img src="@/assets/logo.svg" class="w-12 mr-4" />
@@ -291,7 +291,7 @@ const setTab = (tab: 'images' | 'watermark') => {
         </div>
 
         <div class="flex-grow p-5">
-          <ul class="grid grid-cols-2 xl:grid-cols-3 gap-5">
+          <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 gap-5">
             <li v-for="(imageFile, i) in images" :key="i">
               <button
                 @click="selectImage(i)"
@@ -306,9 +306,8 @@ const setTab = (tab: 'images' | 'watermark') => {
           </ul>
         </div>
 
-        <div class="sticky bottom-0 p-5 bg-gray-900">
+        <div v-if="images.length > 0" class="sticky bottom-0 p-3 lg:p-5 bg-gray-900">
           <button
-            v-if="images.length > 0"
             class="block w-full px-5 py-3 rounded-md bg-primary-500 text-white"
             @click="downloadAll"
           >
@@ -397,7 +396,7 @@ const setTab = (tab: 'images' | 'watermark') => {
       ></canvas>
       <button
         v-if="images.length > 0"
-        class="absolute bottom-8 right-8 px-5 py-3 rounded-md bg-gray-500 hover:bg-primary-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-all"
+        class="absolute bottom-5 right-5 px-5 py-3 rounded-md bg-gray-500 hover:bg-primary-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-all"
         @click="download"
       >
         Download
