@@ -228,7 +228,7 @@ const setTab = (tab: 'images' | 'watermark') => {
 
 <template>
   <div class="flex h-screen">
-    <div class="w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto">
+    <div class="w-[300px] lg:w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto">
       <header class="px-5 pt-5">
         <a href="/" class="flex items-center hover:no-underline">
           <img src="@/assets/logo.svg" class="w-12 mr-4" />
@@ -291,7 +291,7 @@ const setTab = (tab: 'images' | 'watermark') => {
         </div>
 
         <div class="flex-grow p-5">
-          <ul class="grid grid-cols-3 gap-5">
+          <ul class="grid grid-cols-2 xl:grid-cols-3 gap-5">
             <li v-for="(imageFile, i) in images" :key="i">
               <button
                 @click="selectImage(i)"
