@@ -229,6 +229,14 @@ const setTab = (tab: 'images' | 'watermark') => {
 <template>
   <div class="flex h-screen">
     <div class="w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto">
+      <header class="px-5 pt-5">
+        <a href="/" class="flex items-center hover:no-underline">
+          <img src="@/assets/logo.svg" class="w-12 mr-4" />
+
+          <span class="pb-3 font-extralight text-2xl text-white">CreatorGuard</span>
+        </a>
+      </header>
+
       <nav
         class="sticky px-5 top-0 grid grid-cols-2 text-gray-400 border-b border-gray-700 bg-gray-900"
       >
