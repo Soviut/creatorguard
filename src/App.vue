@@ -229,8 +229,8 @@ const setTab = (tab: 'images' | 'watermark') => {
 <template>
   <div class="flex flex-col lg:flex-row h-screen">
     <div
-      class="w-full lg:h-auto lg:w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto"
-      :class="images.length > 0 ? 'h-1/2' : 'h-full'"
+      class="w-full lg:h-screen lg:w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto"
+      :class="images.length > 0 ? 'h-[50vh]' : 'h-screen'"
     >
       <header class="px-5 pt-5">
         <a href="/" class="flex items-center hover:no-underline">
