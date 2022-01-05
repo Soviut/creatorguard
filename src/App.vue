@@ -397,7 +397,7 @@ const setTab = (tab: 'images' | 'watermark') => {
       ></canvas>
       <button
         v-if="images.length > 0"
-        class="absolute bottom-8 right-8 px-5 py-3 rounded-md bg-gray-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-opacity"
+        class="absolute bottom-8 right-8 px-5 py-3 rounded-md bg-gray-500 hover:bg-primary-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-all"
         @click="download"
       >
         Download
