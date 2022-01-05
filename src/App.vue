@@ -228,7 +228,10 @@ const setTab = (tab: 'images' | 'watermark') => {
 
 <template>
   <div class="flex flex-col lg:flex-row h-screen">
-    <div class="w-full h-1/2 lg:h-auto lg:w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto">
+    <div
+      class="w-full lg:h-auto lg:w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto"
+      :class="images.length > 0 ? 'h-1/2' : 'h-full'"
+    >
       <header class="px-5 pt-5">
         <a href="/" class="flex items-center hover:no-underline">
           <img src="@/assets/logo.svg" class="w-12 mr-4" />
@@ -387,7 +390,8 @@ const setTab = (tab: 'images' | 'watermark') => {
     </div>
 
     <div
-      class="flex-grow relative flex flex-col p-5 justify-center overflow-auto"
+      class="flex-grow relative flex-col p-5 justify-center overflow-auto"
+      :class="images.length > 0 ? 'lg:flex' : 'hidden'"
     >
       <canvas
         v-show="images.length > 0"
