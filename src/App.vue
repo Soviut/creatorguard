@@ -267,6 +267,7 @@ const setTab = (tab: 'images' | 'watermark') => {
           <label
             for="image-files"
             class="relative block px-5 py-24 border-2 border-dashed border-gray-600 rounded-lg text-white text-center text-lg cursor-pointer hover:bg-gray-800 transition"
+            tabindex="0"
           >
             Click or drop image files here
 
