@@ -246,7 +246,7 @@ const setTab = (tab: 'images' | 'watermark') => {
       >
         <button
           @click="setTab('images')"
-          class="p-3 border-b-4"
+          class="p-3 border-b-4 hover:text-white"
           :class="
             currentTab === 'images'
               ? 'border-primary-500 text-white'
@@ -263,7 +263,7 @@ const setTab = (tab: 'images' | 'watermark') => {
         </button>
         <button
           @click="setTab('watermark')"
-          class="p-3 border-b-4"
+          class="p-3 border-b-4 hover:text-white"
           :class="
             currentTab === 'watermark'
               ? 'border-primary-500 text-white'
@@ -278,7 +278,7 @@ const setTab = (tab: 'images' | 'watermark') => {
         <div v-if="images.length === 0" class="p-5">
           <label
             for="image-files"
-            class="relative block px-5 py-24 border-2 border-dashed border-gray-600 rounded-lg text-white text-center text-lg cursor-pointer hover:bg-gray-800 transition"
+            class="relative block px-5 py-24 border-2 border-dashed border-gray-600 rounded-lg text-white text-center text-lg cursor-pointer hover:bg-gray-800 transition-all"
             tabindex="0"
           >
             Click or drop image files here
@@ -301,7 +301,7 @@ const setTab = (tab: 'images' | 'watermark') => {
                 @click="selectImage(i)"
                 class="w-full h-full p-3 rounded items-center border aspect-square object-scale-down"
                 :class="
-                  i === imageIndex ? 'border-teal-500' : 'border-gray-700'
+                  i === imageIndex ? 'border-teal-500' : 'border-gray-700 hover:border-gray-600'
                 "
               >
                 <img :src="imageFile.image.src" class="max-w-full max-h-full mx-auto" />
@@ -312,7 +312,7 @@ const setTab = (tab: 'images' | 'watermark') => {
 
         <div v-if="images.length > 0" class="sticky bottom-0 p-3 lg:p-5 bg-gray-900">
           <button
-            class="block w-full px-5 py-3 rounded-md bg-primary-500 text-white"
+            class="block w-full px-5 py-3 rounded-md bg-primary-600 hover:bg-primary-500 text-white transition-colors"
             @click="downloadAll"
           >
             Download All
@@ -401,7 +401,7 @@ const setTab = (tab: 'images' | 'watermark') => {
       ></canvas>
       <button
         v-if="images.length > 0"
-        class="absolute bottom-5 right-5 px-5 py-3 rounded-md bg-gray-500 hover:bg-primary-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-all"
+        class="absolute bottom-5 right-5 px-5 py-3 rounded-md bg-gray-500 hover:bg-primary-500 text-white opacity-40 hover:opacity-100 focus:opacity-100 transition-colors"
         @click="download"
       >
         Download
