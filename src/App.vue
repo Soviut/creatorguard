@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import UnloadAlert from '@/components/UnloadAlert.vue'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import {
@@ -224,12 +225,6 @@ const currentTab = ref<'images' | 'watermark'>('images')
 const setTab = (tab: 'images' | 'watermark') => {
   currentTab.value = tab
 }
-
-// display leave/reload site warning
-watch(
-  () => images.value.length,
-  (val) => window.onbeforeunload = val > 0 ? () => true : null
-)
 </script>
 
 <template>
@@ -429,4 +424,7 @@ watch(
       </button>
     </div>
   </div>
+
+  <!-- warn before leaving the page if images are loaded -->
+  <UnloadAlert :enabled="images.length > 0" />
 </template>
