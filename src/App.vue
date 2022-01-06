@@ -232,7 +232,7 @@ const setTab = (tab: 'images' | 'watermark') => {
       class="w-full lg:h-screen lg:w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto"
       :class="images.length > 0 ? 'h-[50vh]' : 'h-screen'"
     >
-      <header class="px-5 pt-5">
+      <header class="px-5 pt-5" :class="{ 'hidden lg:block': images.length > 0 }">
         <a href="/" class="flex items-center hover:no-underline">
           <img src="@/assets/logo.svg" class="w-12 mr-4" />
 
@@ -242,6 +242,7 @@ const setTab = (tab: 'images' | 'watermark') => {
 
       <nav
         class="sticky px-5 top-0 grid grid-cols-2 text-gray-400 border-b border-gray-700 bg-gray-900"
+        v-show="images.length > 0"
       >
         <button
           @click="setTab('images')"
