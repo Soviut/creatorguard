@@ -224,6 +224,12 @@ const currentTab = ref<'images' | 'watermark'>('images')
 const setTab = (tab: 'images' | 'watermark') => {
   currentTab.value = tab
 }
+
+// display leave/reload site warning
+watch(
+  () => images.value.length,
+  (val) => window.onbeforeunload = val > 0 ? () => true : null
+)
 </script>
 
 <template>
@@ -232,11 +238,16 @@ const setTab = (tab: 'images' | 'watermark') => {
       class="w-full lg:h-screen lg:w-[400px] xl:w-[600px] flex-shrink-0 flex flex-col bg-gray-900 overflow-auto"
       :class="images.length > 0 ? 'h-[50vh]' : 'h-screen'"
     >
-      <header class="px-5 pt-5" :class="{ 'hidden lg:block': images.length > 0 }">
+      <header
+        class="px-5 pt-5"
+        :class="{ 'hidden lg:block': images.length > 0 }"
+      >
         <a href="/" class="flex items-center hover:no-underline">
           <img src="@/assets/logo.svg" class="w-12 mr-4" />
 
-          <span class="pb-3 font-extralight text-2xl text-white">CreatorGuard</span>
+          <span class="pb-3 font-extralight text-2xl text-white"
+            >CreatorGuard</span
+          >
         </a>
       </header>
 
@@ -295,22 +306,32 @@ const setTab = (tab: 'images' | 'watermark') => {
         </div>
 
         <div class="flex-grow p-5">
-          <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+          <ul
+            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 gap-5"
+          >
             <li v-for="(imageFile, i) in images" :key="i">
               <button
                 @click="selectImage(i)"
                 class="w-full h-full p-3 rounded items-center border aspect-square object-scale-down"
                 :class="
-                  i === imageIndex ? 'border-teal-500' : 'border-gray-700 hover:border-gray-600'
+                  i === imageIndex
+                    ? 'border-teal-500'
+                    : 'border-gray-700 hover:border-gray-600'
                 "
               >
-                <img :src="imageFile.image.src" class="max-w-full max-h-full mx-auto" />
+                <img
+                  :src="imageFile.image.src"
+                  class="max-w-full max-h-full mx-auto"
+                />
               </button>
             </li>
           </ul>
         </div>
 
-        <div v-if="images.length > 0" class="sticky bottom-0 p-3 lg:p-5 bg-gray-900">
+        <div
+          v-if="images.length > 0"
+          class="sticky bottom-0 p-3 lg:p-5 bg-gray-900"
+        >
           <button
             class="block w-full px-5 py-3 rounded-md bg-primary-600 hover:bg-primary-500 text-white transition-colors"
             @click="downloadAll"
