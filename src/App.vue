@@ -298,12 +298,12 @@ const setTab = (tab: 'images' | 'watermark') => {
             <li v-for="(imageFile, i) in images" :key="i">
               <button
                 @click="selectImage(i)"
-                class="w-full h-full p-3 rounded items-center border aspect-square"
+                class="w-full h-full p-3 rounded items-center border aspect-square object-scale-down"
                 :class="
                   i === imageIndex ? 'border-teal-500' : 'border-gray-700'
                 "
               >
-                <img :src="imageFile.image.src" class="max-w-full" />
+                <img :src="imageFile.image.src" class="max-w-full max-h-full mx-auto" />
               </button>
             </li>
           </ul>
