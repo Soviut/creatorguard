@@ -383,17 +383,28 @@ const setTab = (tab: 'images' | 'watermark') => {
           </fieldset>
 
           <div>
-            <label for="hoffset" class="text-white">Horizontal Offset</label>
+            <div class="flex justify-between">
+              <label for="hoffset" class="text-white">Horizontal Offset</label>
+              <div class="text-gray-300 font-semibold">{{ offsetX }}px</div>
+            </div>
             <input id="hoffset" type="range" min="-200" max="200" v-model="offsetX" />
           </div>
 
           <div>
-            <label for="voffset" class="text-white">Vertical Offset</label>
+            <div class="flex justify-between">
+              <label for="voffset" class="text-white">Vertical Offset</label>
+              <div class="text-gray-300 font-semibold">{{ offsetY }}px</div>
+            </div>
+
             <input id="voffset" type="range" min="-200" max="200" v-model="offsetY" />
           </div>
 
           <div>
-            <label for="opacity" class="text-white">Opacity</label>
+            <div class="flex justify-between">
+              <label for="opacity" class="text-white">Opacity</label>
+              <div class="text-gray-300 font-semibold">{{ opacity * 100 }}%</div>
+            </div>
+
             <input
               id="opacity"
               type="range"
