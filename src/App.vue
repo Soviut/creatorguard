@@ -14,6 +14,7 @@ import {
   RenderTexture,
   Transform,
 } from 'pixi.js'
+import Loading from './components/Loading.vue'
 
 interface ImageFile {
   image: HTMLImageElement
@@ -185,10 +186,16 @@ const selectImage = (i: number) => {
 
 const stripDataUrl = (url: string) => url.replace(/^data:.*?,/, '')
 
+const downloading = ref(false)
+
 const downloadAll = async () => {
+  downloading.value = true
+
+  // HACK: force a redraw to show loading spinner early, nextTick() did not work
+  await new Promise(resolve => setTimeout(resolve, 100))
+
   const zip = new JSZip()
 
-  // TODO: include "watermark produced by URL"
   zip.file('thanks.txt', 'Watermarked produced by https://creatorguard.com\n')
 
   const originalIndex = imageIndex.value
@@ -210,6 +217,9 @@ const downloadAll = async () => {
   imageIndex.value = originalIndex
 
   const content = await zip.generateAsync({ type: 'blob' })
+
+  downloading.value = false
+
   saveAs(content, 'download.zip')
 }
 
@@ -328,10 +338,15 @@ const setTab = (tab: 'images' | 'watermark') => {
           class="sticky bottom-0 p-3 lg:p-5 bg-gray-900"
         >
           <button
-            class="block w-full px-5 py-3 rounded-md bg-primary-600 hover:bg-primary-500 text-white transition-colors"
+            class="block w-full px-5 py-3 rounded-md bg-primary-600 hover:bg-primary-500 disabled:bg-secondary-500 text-white disabled:text-secondary-300 transition-colors"
+            :disabled="downloading"
             @click="downloadAll"
           >
-            Download All
+            <span v-if="downloading">
+              <Loading />
+              Generating Zip File
+            </span>
+            <span v-else>Download All</span>
           </button>
         </div>
       </section>
