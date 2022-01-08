@@ -10,6 +10,9 @@ app.use(VueGtag, {
   property: {
     // id: 'G-01GZH4SWQZ', // local
     id: 'G-G6STRX97S7', // prod
+    params: {
+      send_page_view: true,
+    },
   },
 })
 
