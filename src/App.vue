@@ -194,6 +194,7 @@ const downloadAll = async () => {
   // HACK: force a redraw to show loading spinner early, nextTick() did not work
   await new Promise(resolve => setTimeout(resolve, 100))
 
+  // remember what image we had selected
   const originalIndex = imageIndex.value
 
   const zip = new JSZip()
@@ -212,7 +213,7 @@ const downloadAll = async () => {
     zip.file(imageFile.file.name, stripDataUrl(dataUrl), { base64: true })
   }
 
-  // reset index
+  // reset selected image to original selection
   imageIndex.value = originalIndex
 
   const content = await zip.generateAsync({ type: 'blob' })
