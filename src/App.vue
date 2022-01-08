@@ -15,6 +15,7 @@ import {
   Transform,
 } from 'pixi.js'
 import Loading from './components/Loading.vue'
+import Explainer from './components/Explainer.vue'
 
 interface ImageFile {
   image: HTMLImageElement
@@ -290,26 +291,29 @@ const setTab = (tab: 'images' | 'watermark') => {
         </button>
       </nav>
 
+      <!-- INTRO -->
+      <section v-if="images.length === 0" class="p-5">
+        <label
+          for="image-files"
+          class="relative block mb-8 px-5 py-24 border-2 border-dashed border-gray-600 rounded-lg text-white text-center text-lg cursor-pointer hover:bg-gray-800 transition-all"
+          tabindex="0"
+        >
+          Click or drop image files here
+
+          <input
+            id="image-files"
+            type="file"
+            accept="image/*"
+            multiple
+            class="absolute inset-0 opacity-0 cursor-pointer"
+            @change="fileChange"
+          />
+        </label>
+
+        <Explainer class="text-gray-400 text-sm" />
+      </section>
+
       <section v-show="currentTab === 'images'" class="flex-grow flex flex-col">
-        <div v-if="images.length === 0" class="p-5">
-          <label
-            for="image-files"
-            class="relative block px-5 py-24 border-2 border-dashed border-gray-600 rounded-lg text-white text-center text-lg cursor-pointer hover:bg-gray-800 transition-all"
-            tabindex="0"
-          >
-            Click or drop image files here
-
-            <input
-              id="image-files"
-              type="file"
-              accept="image/*"
-              multiple
-              class="absolute inset-0 opacity-0 cursor-pointer"
-              @change="fileChange"
-            />
-          </label>
-        </div>
-
         <div class="flex-grow p-5">
           <ul
             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 gap-5"
