@@ -313,128 +313,130 @@ const setTab = (tab: 'images' | 'watermark') => {
         <Explainer class="text-gray-400 text-sm" />
       </section>
 
-      <section v-show="currentTab === 'images'" class="flex-grow flex flex-col">
-        <div class="flex-grow p-5">
-          <ul
-            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 gap-5"
+      <template v-else>
+        <section v-show="currentTab === 'images'" class="flex-grow flex flex-col">
+          <div class="flex-grow p-5">
+            <ul
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 gap-5"
+            >
+              <li v-for="(imageFile, i) in images" :key="i">
+                <button
+                  @click="selectImage(i)"
+                  class="w-full h-full p-3 rounded items-center border aspect-square object-scale-down"
+                  :class="
+                    i === imageIndex
+                      ? 'border-teal-500'
+                      : 'border-gray-700 hover:border-gray-600'
+                  "
+                >
+                  <img
+                    :src="imageFile.image.src"
+                    class="max-w-full max-h-full mx-auto"
+                  />
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <div
+            v-if="images.length > 0"
+            class="sticky bottom-0 p-3 lg:p-5 bg-gray-900"
           >
-            <li v-for="(imageFile, i) in images" :key="i">
-              <button
-                @click="selectImage(i)"
-                class="w-full h-full p-3 rounded items-center border aspect-square object-scale-down"
-                :class="
-                  i === imageIndex
-                    ? 'border-teal-500'
-                    : 'border-gray-700 hover:border-gray-600'
-                "
-              >
-                <img
-                  :src="imageFile.image.src"
-                  class="max-w-full max-h-full mx-auto"
-                />
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        <div
-          v-if="images.length > 0"
-          class="sticky bottom-0 p-3 lg:p-5 bg-gray-900"
-        >
-          <button
-            class="block w-full px-5 py-3 rounded-md bg-primary-600 hover:bg-primary-500 disabled:bg-secondary-500 text-white disabled:text-secondary-300 transition-colors"
-            :disabled="downloading"
-            @click="downloadAll"
-          >
-            <span v-if="downloading">
-              <Loading />
-              Generating Zip File
-            </span>
-            <span v-else>Download All</span>
-          </button>
-        </div>
-      </section>
-
-      <section v-show="currentTab === 'watermark'" class="p-5">
-        <form @submit.prevent class="space-y-3">
-          <div>
-            <label for="message" class="text-white">Message</label>
-            <input id="message" type="text" v-model="message" />
+            <button
+              class="block w-full px-5 py-3 rounded-md bg-primary-600 hover:bg-primary-500 disabled:bg-secondary-500 text-white disabled:text-secondary-300 transition-colors"
+              :disabled="downloading"
+              @click="downloadAll"
+            >
+              <span v-if="downloading">
+                <Loading />
+                Generating Zip File
+              </span>
+              <span v-else>Download All</span>
+            </button>
           </div>
+        </section>
 
-          <fieldset>
-            <legend class="text-white">Warmark Density</legend>
+        <section v-show="currentTab === 'watermark'" class="p-5">
+          <form @submit.prevent class="space-y-3">
+            <div>
+              <label for="message" class="text-white">Message</label>
+              <input id="message" type="text" v-model="message" />
+            </div>
 
-            <div class="grid grid-cols-3">
-              <div>
-                <input
-                  id="low"
-                  type="radio"
-                  name="spacing"
-                  :value="{ width: 512, height: 256 }"
-                  v-model="spacing"
-                />
-                <label for="low" class="text-white ml-2">Low</label>
+            <fieldset>
+              <legend class="text-white">Warmark Density</legend>
+
+              <div class="grid grid-cols-3">
+                <div>
+                  <input
+                    id="low"
+                    type="radio"
+                    name="spacing"
+                    :value="{ width: 512, height: 256 }"
+                    v-model="spacing"
+                  />
+                  <label for="low" class="text-white ml-2">Low</label>
+                </div>
+
+                <div>
+                  <input
+                    id="medium"
+                    type="radio"
+                    name="spacing"
+                    :value="{ width: 384, height: 192 }"
+                    v-model="spacing"
+                  />
+                  <label for="medium" class="text-white ml-2">Medium</label>
+                </div>
+
+                <div>
+                  <input
+                    id="high"
+                    type="radio"
+                    name="spacing"
+                    :value="{ width: 256, height: 128 }"
+                    v-model="spacing"
+                  />
+                  <label for="high" class="text-white ml-2">High</label>
+                </div>
+              </div>
+            </fieldset>
+
+            <div>
+              <div class="flex justify-between">
+                <label for="hoffset" class="text-white">Horizontal Offset</label>
+                <div class="text-gray-300 font-semibold">{{ offsetX }}px</div>
+              </div>
+              <input id="hoffset" type="range" min="-200" max="200" v-model="offsetX" />
+            </div>
+
+            <div>
+              <div class="flex justify-between">
+                <label for="voffset" class="text-white">Vertical Offset</label>
+                <div class="text-gray-300 font-semibold">{{ offsetY }}px</div>
               </div>
 
-              <div>
-                <input
-                  id="medium"
-                  type="radio"
-                  name="spacing"
-                  :value="{ width: 384, height: 192 }"
-                  v-model="spacing"
-                />
-                <label for="medium" class="text-white ml-2">Medium</label>
+              <input id="voffset" type="range" min="-200" max="200" v-model="offsetY" />
+            </div>
+
+            <div>
+              <div class="flex justify-between">
+                <label for="opacity" class="text-white">Opacity</label>
+                <div class="text-gray-300 font-semibold">{{ opacity * 100 }}%</div>
               </div>
 
-              <div>
-                <input
-                  id="high"
-                  type="radio"
-                  name="spacing"
-                  :value="{ width: 256, height: 128 }"
-                  v-model="spacing"
-                />
-                <label for="high" class="text-white ml-2">High</label>
-              </div>
+              <input
+                id="opacity"
+                type="range"
+                min="0.1"
+                max="1.0"
+                step="0.1"
+                v-model="opacity"
+              />
             </div>
-          </fieldset>
-
-          <div>
-            <div class="flex justify-between">
-              <label for="hoffset" class="text-white">Horizontal Offset</label>
-              <div class="text-gray-300 font-semibold">{{ offsetX }}px</div>
-            </div>
-            <input id="hoffset" type="range" min="-200" max="200" v-model="offsetX" />
-          </div>
-
-          <div>
-            <div class="flex justify-between">
-              <label for="voffset" class="text-white">Vertical Offset</label>
-              <div class="text-gray-300 font-semibold">{{ offsetY }}px</div>
-            </div>
-
-            <input id="voffset" type="range" min="-200" max="200" v-model="offsetY" />
-          </div>
-
-          <div>
-            <div class="flex justify-between">
-              <label for="opacity" class="text-white">Opacity</label>
-              <div class="text-gray-300 font-semibold">{{ opacity * 100 }}%</div>
-            </div>
-
-            <input
-              id="opacity"
-              type="range"
-              min="0.1"
-              max="1.0"
-              step="0.1"
-              v-model="opacity"
-            />
-          </div>
-        </form>
-      </section>
+          </form>
+        </section>
+      </template>
     </div>
 
     <div
