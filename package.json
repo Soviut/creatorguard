@@ -14,7 +14,8 @@
     "file-saver": "^2.0.5",
     "jszip": "^3.7.1",
     "pixi.js": "^6.2.1",
-    "vue": "^3.2.25"
+    "vue": "^3.2.25",
+    "vue-gtag-next": "^1.14.0"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.4",
