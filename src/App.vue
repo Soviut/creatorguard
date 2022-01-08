@@ -263,7 +263,7 @@ const setTab = (tab: 'images' | 'watermark') => {
 
           <span
             v-if="images.length"
-            class="ml-2 px-2 py-1 rounded-full bg-primary-500 text-xs text-white"
+            class="ml-2 px-3 py-1 rounded-full bg-primary-500 text-xs text-white"
             >{{ images.length }}</span
           >
         </button>
