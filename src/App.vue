@@ -194,11 +194,10 @@ const downloadAll = async () => {
   // HACK: force a redraw to show loading spinner early, nextTick() did not work
   await new Promise(resolve => setTimeout(resolve, 100))
 
-  const zip = new JSZip()
-
-  zip.file('thanks.txt', 'Watermarked produced by https://creatorguard.com\n')
-
   const originalIndex = imageIndex.value
+
+  const zip = new JSZip()
+  zip.file('thanks.txt', 'Watermarked produced by https://creatorguard.com\n')
 
   // process each image through the canvas sequentially
   for (let i = 0; i < images.value.length; i++) {
