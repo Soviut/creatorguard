@@ -339,8 +339,8 @@ const setTab = (tab: 'images' | 'watermark') => {
       <section v-show="currentTab === 'watermark'" class="p-5">
         <form @submit.prevent class="space-y-3">
           <div>
-            <label class="text-white">Message</label>
-            <input type="text" v-model="message" />
+            <label for="message" class="text-white">Message</label>
+            <input id="message" type="text" v-model="message" />
           </div>
 
           <fieldset>
@@ -383,18 +383,19 @@ const setTab = (tab: 'images' | 'watermark') => {
           </fieldset>
 
           <div>
-            <label class="text-white">Horizontal Offset</label>
-            <input type="range" min="-200" max="200" v-model="offsetX" />
+            <label for="hoffset" class="text-white">Horizontal Offset</label>
+            <input id="hoffset" type="range" min="-200" max="200" v-model="offsetX" />
           </div>
 
           <div>
-            <label class="text-white">Vertical Offset</label>
-            <input type="range" min="-200" max="200" v-model="offsetY" />
+            <label for="voffset" class="text-white">Vertical Offset</label>
+            <input id="voffset" type="range" min="-200" max="200" v-model="offsetY" />
           </div>
 
           <div>
-            <label class="text-white">Opacity</label>
+            <label for="opacity" class="text-white">Opacity</label>
             <input
+              id="opacity"
               type="range"
               min="0.1"
               max="1.0"
