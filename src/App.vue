@@ -459,12 +459,13 @@ const setTab = (tab: 'images' | 'watermark') => {
     </div>
 
     <div
-      class="flex flex-grow relative flex-col p-5 justify-center overflow-auto"
+      class="lg:flex flex-grow relative flex-col p-5 justify-center overflow-auto"
+      :class="images.length > 0 ? '' : 'hidden'"
     >
       <img
         v-if="images.length === 0"
         src="@/assets/logo.svg"
-        class="max-w-[50%] max-h-full mx-auto grayscale brightness-150"
+        class="max-w-[50%] max-h-full mx-auto grayscale brightness-[1.65]"
       />
 
       <canvas
