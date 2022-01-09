@@ -7,8 +7,6 @@
     from art theft.
   </p>
 
-  <h2 class="mb-3 text-xl">Why was it developed?</h2>
-
   <p class="mb-3">
     Artist friends and colleagues have reported a dramatic increase in art theft
     from their online portfolios by scammers trying to cash in on the
