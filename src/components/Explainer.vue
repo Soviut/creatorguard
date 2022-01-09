@@ -31,8 +31,8 @@
   </p>
 
   <p class="mb-3">
-    The only data that gets transmitted from the site is analytics. This date is
-    anonymous and is only used to measure how much traffic per day the app gets.
+    The only data that gets transmitted from the site are anonymous analytics
+    used to measure how much traffic the app gets.
     These kinds of figures look good on my resume.
   </p>
 </div>
