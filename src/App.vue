@@ -308,7 +308,7 @@ const setTab = (tab: 'images' | 'watermark') => {
           <input
             id="image-files"
             type="file"
-            accept="image/*"
+            accept=".png,.jpg,.jpeg"
             multiple
             class="absolute inset-0 opacity-0 cursor-pointer"
             @change="fileChange"
