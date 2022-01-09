@@ -193,7 +193,7 @@ const downloadAll = async () => {
   downloading.value = true
 
   // HACK: force a redraw to show loading spinner early, nextTick() did not work
-  await new Promise(resolve => setTimeout(resolve, 100))
+  await new Promise((resolve) => setTimeout(resolve, 100))
 
   // remember what image we had selected
   const originalIndex = imageIndex.value
@@ -314,7 +314,10 @@ const setTab = (tab: 'images' | 'watermark') => {
       </section>
 
       <template v-else>
-        <section v-show="currentTab === 'images'" class="flex-grow flex flex-col">
+        <section
+          v-show="currentTab === 'images'"
+          class="flex-grow flex flex-col"
+        >
           <div class="flex-grow p-5">
             <ul
               class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 gap-5"
@@ -404,10 +407,18 @@ const setTab = (tab: 'images' | 'watermark') => {
 
             <div>
               <div class="flex justify-between">
-                <label for="hoffset" class="text-white">Horizontal Offset</label>
+                <label for="hoffset" class="text-white"
+                  >Horizontal Offset</label
+                >
                 <div class="text-gray-300 font-semibold">{{ offsetX }}px</div>
               </div>
-              <input id="hoffset" type="range" min="-200" max="200" v-model="offsetX" />
+              <input
+                id="hoffset"
+                type="range"
+                min="-200"
+                max="200"
+                v-model="offsetX"
+              />
             </div>
 
             <div>
@@ -416,13 +427,21 @@ const setTab = (tab: 'images' | 'watermark') => {
                 <div class="text-gray-300 font-semibold">{{ offsetY }}px</div>
               </div>
 
-              <input id="voffset" type="range" min="-200" max="200" v-model="offsetY" />
+              <input
+                id="voffset"
+                type="range"
+                min="-200"
+                max="200"
+                v-model="offsetY"
+              />
             </div>
 
             <div>
               <div class="flex justify-between">
                 <label for="opacity" class="text-white">Opacity</label>
-                <div class="text-gray-300 font-semibold">{{ opacity * 100 }}%</div>
+                <div class="text-gray-300 font-semibold">
+                  {{ opacity * 100 }}%
+                </div>
               </div>
 
               <input
@@ -440,9 +459,14 @@ const setTab = (tab: 'images' | 'watermark') => {
     </div>
 
     <div
-      class="flex-grow relative flex-col p-5 justify-center overflow-auto"
-      :class="images.length > 0 ? 'lg:flex' : 'hidden'"
+      class="flex flex-grow relative flex-col p-5 justify-center overflow-auto"
     >
+      <img
+        v-if="images.length === 0"
+        src="@/assets/logo.svg"
+        class="max-w-[50%] max-h-full mx-auto grayscale brightness-150"
+      />
+
       <canvas
         v-show="images.length > 0"
         ref="canvas"
