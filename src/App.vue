@@ -16,6 +16,7 @@ import {
 } from 'pixi.js'
 import Loading from './components/Loading.vue'
 import Explainer from './components/Explainer.vue'
+import TwitterLink from './components/TwitterLink.vue'
 
 interface ImageFile {
   image: HTMLImageElement
@@ -245,16 +246,20 @@ const setTab = (tab: 'images' | 'watermark') => {
       :class="images.length > 0 ? 'h-[50vh]' : 'h-screen'"
     >
       <header
-        class="px-5 pt-5"
+        class="flex items-center justify-between px-5 pt-5"
         :class="{ 'hidden lg:block': images.length > 0 }"
       >
         <a href="/" class="flex items-center hover:no-underline">
           <img src="@/assets/logo.svg" class="w-12 mr-4" />
 
-          <span class="pb-3 font-extralight text-2xl text-white"
+          <span class="pb-1 font-extralight text-2xl text-white"
             >CreatorGuard</span
           >
         </a>
+
+        <div>
+          <TwitterLink />
+        </div>
       </header>
 
       <nav
